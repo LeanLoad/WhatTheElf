@@ -1,5 +1,20 @@
+# Rust build artifacts
+/target/
+
+# Lean build artifacts
 /.lake/
+
+# Generated corpus and checker output
 /fixtures/
+/results/
+/check.out
+/tools/
 /fixtures_out/
+
+# Runtime crash artifacts
+/core
+/core.*
+
+# Legacy Python cache files
 /__pycache__/
 *.py[cod]

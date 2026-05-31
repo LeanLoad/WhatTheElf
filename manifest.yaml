@@ -1,0 +1,13 @@
+tags:
+  existence: Required data is missing, empty, or effectively absent.
+  coexistence: Related structures that must appear together do not.
+  uniqueness: A structure expected to appear once appears more than once.
+  bounds: An index, offset, size, count, or reference exceeds its valid range.
+  non-overlap: Byte ranges or memory ranges that should be disjoint overlap.
+  containment: A nested range is not contained by the range that owns it.
+  conjugate: Paired fields that constrain each other disagree.
+  cardinality: A count is zero, too large, or inconsistent with actual entries.
+  alignment: An offset, address, or size violates an alignment requirement.
+  ordering: Entries or ranges violate an expected ordering relation.
+  consistency: Multiple encodings of the same fact disagree.
+  encoding: A field uses an invalid enum, bit pattern, or representation.
