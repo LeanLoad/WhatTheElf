@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Generate fixtures
+        run: |
+          python3 -m py_compile whattheelf.py
+          python3 whattheelf.py generate fixtures
+          test -f fixtures/manifest.json

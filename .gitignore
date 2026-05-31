@@ -1,2 +1,5 @@
-/.lake
-/fixtures_out
+/.lake/
+/fixtures/
+/fixtures_out/
+/__pycache__/
+*.py[cod]
