@@ -291,8 +291,11 @@ private def emitInlineEnum
       return "none"  -- exhausted scan; shouldn't happen for current enums
   parseAndElab s!"def {eName}.invalidRaw : Option {rawTy} := {invalidExpr}"
 
+private def trimAsciiString (s : String) : String :=
+  s.trimAscii.toString
+
 private def lastDottedComponent (s : String) : String :=
-  (s.trim.splitOn ".").getLast!
+  ((trimAsciiString s).splitOn ".").getLast!
 
 /-- Try to recognize a "simple invariant" in the pretty-printed Prop and
     return a Lean-source lambda `fun h => { h with f := <bad raw> }` that
@@ -309,13 +312,13 @@ private def lastDottedComponent (s : String) : String :=
     For each, the field has to be a known field of the record with known
     `enumNullaries` (for the enum cases) or `rawType` (for `.toNat = N`). -/
 private def autoViolator (fs : List FieldSpec) (prop : String) : Option String :=
-  let prop := prop.trim
+  let prop := trimAsciiString prop
   -- Disjunction first (its disjuncts contain `=` substrings).
   if (prop.splitOn " ∨ ").length > 1 then
     let disjuncts := prop.splitOn " ∨ "
     let parsed : List (Option (String × String)) := disjuncts.map fun d =>
       match d.splitOn " = " with
-      | [lhs, rhs] => some (lhs.trim, lastDottedComponent rhs)
+      | [lhs, rhs] => some (trimAsciiString lhs, lastDottedComponent rhs)
       | _          => none
     if parsed.all Option.isSome then
       let unwrapped := parsed.filterMap id
@@ -332,7 +335,7 @@ private def autoViolator (fs : List FieldSpec) (prop : String) : Option String :
     else none
   -- `<f>.toNat = <n>`
   else if let some (field, numStr) := (match prop.splitOn ".toNat = " with
-                                       | [a, b] => some (a.trim, b.trim)
+                                       | [a, b] => some (trimAsciiString a, trimAsciiString b)
                                        | _      => none) then
     match fs.find? (·.name = field), numStr.toNat? with
     | some f, some n =>
@@ -345,7 +348,7 @@ private def autoViolator (fs : List FieldSpec) (prop : String) : Option String :
     | _, _ => none
   -- `<f> ≠ <Path>.<ctor>`
   else if let some (field, ctor) := (match prop.splitOn " ≠ " with
-                                     | [a, b] => some (a.trim, lastDottedComponent b)
+                                     | [a, b] => some (trimAsciiString a, lastDottedComponent b)
                                      | _      => none) then
     match fs.find? (·.name = field) with
     | some f =>
@@ -355,7 +358,7 @@ private def autoViolator (fs : List FieldSpec) (prop : String) : Option String :
     | none => none
   -- `<f> = <Path>.<ctor>`
   else if let some (field, ctor) := (match prop.splitOn " = " with
-                                     | [a, b] => some (a.trim, lastDottedComponent b)
+                                     | [a, b] => some (trimAsciiString a, lastDottedComponent b)
                                      | _      => none) then
     match fs.find? (·.name = field) with
     | some f =>

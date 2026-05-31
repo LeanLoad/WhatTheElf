@@ -15,7 +15,7 @@ lean_exe «whattheelf» where
     with `lake build Tests`; failures show up as elaboration errors. -/
 lean_lib «Tests» where
   srcDir := "tests"
-  roots := #[`Fixtures, `Negative, `FuzzGuard]
+  roots := #[`Fixtures, `EmitFixtures, `Negative, `FuzzGuard]
 
 /-- Emit fixture ELFs to disk for cross-parser differential testing.
     Run via `lake build emit_fixtures && ./.lake/build/bin/emit_fixtures <dir>`. -/
