@@ -120,8 +120,8 @@ tracked `crashes/` and `crashes-musl/`.
 
 ## Report
 
-`./report.sh [OUT_DIR]` (default `site/`) renders a self-contained
-`index.html`:
+`./report.sh [OUT_DIR]` (default `gh-pages/`, the published-site worktree)
+renders a self-contained `index.html`:
 
 * the crash catalogue (grouped by loader, with signal / site / reproducer-kind /
   details),
@@ -138,13 +138,14 @@ source of truth; the report just projects them.
 ### Publishing to GitHub Pages
 
 The published site lives on an orphan `gh-pages` branch that contains **only**
-the generated files, checked out as a git worktree (ignored on the main branch):
+the generated files (`index.html`, `crashes.json`, `findings.json`,
+`.nojekyll`), checked out as a git worktree at `./gh-pages` (ignored on the main
+branch). `./deploy.sh` does the whole thing — creates the worktree if needed,
+regenerates the report into it, commits, and pushes:
 
 ```sh
-git worktree add --orphan -b gh-pages ./gh-pages   # one-time
-./report.sh gh-pages && touch gh-pages/.nojekyll
-git -C gh-pages add -A && git -C gh-pages commit -m "Publish report"
-git -C gh-pages push -u origin gh-pages
+./gen.sh && ./check.sh   # refresh fixtures + results first
+./deploy.sh
 ```
 
 Enable Pages once in the repo settings (Source: `gh-pages` branch, `/` root);

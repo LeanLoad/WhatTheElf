@@ -2,7 +2,8 @@
 //! self-contained HTML page, plus a machine-readable `crashes.json`.
 //!
 //! The Rust definitions (`cases::ALL`, `crashes::ALL`) are the single source of
-//! truth; this just projects them. Usage: `report [OUT_DIR]` (default `site`).
+//! truth; this just projects them. Usage: `report [OUT_DIR]` (default
+//! `gh-pages`, the published-site worktree; see `deploy.sh`).
 use std::collections::{BTreeMap, BTreeSet};
 use std::error::Error;
 use std::fs;
@@ -13,7 +14,7 @@ use whattheelf::{cases, crashes};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let root = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let out = std::env::args().nth(1).unwrap_or_else(|| "site".to_string());
+    let out = std::env::args().nth(1).unwrap_or_else(|| "gh-pages".to_string());
     let out = root.join(out);
     fs::create_dir_all(&out)?;
 
