@@ -121,7 +121,31 @@ tracked `crashes/` and `crashes-musl/`.
 ## Report
 
 `./report.sh [OUT_DIR]` (default `site/`) renders a self-contained
-`index.html` — the crash catalogue (grouped by loader, with signal / site /
-reproducer-kind / details), the structural cases, and the backend×case results
-matrix if `check` has been run — plus a machine-readable `crashes.json`. The
-Rust definitions are the single source of truth; the report just projects them.
+`index.html`:
+
+* the crash catalogue (grouped by loader, with signal / site / reproducer-kind /
+  details),
+* an **Unexpected outcomes** section — every backend×case that crashed, hung, or
+  errored (vs a clean accept/reject), which surfaces findings beyond the curated
+  `crashes::ALL` (e.g. `llvm-objdump` crashing, or a structural case that also
+  crashes a loader),
+* the structural cases, and the full backend×case matrix when `check` has run.
+
+It also writes machine-readable `crashes.json` (the curated catalogue) and
+`findings.json` (all unexpected outcomes). The Rust definitions are the single
+source of truth; the report just projects them.
+
+### Publishing to GitHub Pages
+
+The published site lives on an orphan `gh-pages` branch that contains **only**
+the generated files, checked out as a git worktree (ignored on the main branch):
+
+```sh
+git worktree add --orphan -b gh-pages ./gh-pages   # one-time
+./report.sh gh-pages && touch gh-pages/.nojekyll
+git -C gh-pages add -A && git -C gh-pages commit -m "Publish report"
+git -C gh-pages push -u origin gh-pages
+```
+
+Enable Pages once in the repo settings (Source: `gh-pages` branch, `/` root);
+the site is then served at `https://<owner>.github.io/WhatTheElf/`.
