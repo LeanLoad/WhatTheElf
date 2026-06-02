@@ -129,7 +129,9 @@ renders a self-contained `index.html`:
   errored (vs a clean accept/reject), which surfaces findings beyond the curated
   `crashes::ALL` (e.g. `llvm-objdump` crashing, or a structural case that also
   crashes a loader),
-* the structural cases, and the full backend×case matrix when `check` has run.
+* the structural cases, and the full backend×case matrix when `check` has run —
+  hover a cell for the backend's message, click it to load that run's full
+  captured `stdout`/`stderr` (copied verbatim into `results/` beside the page).
 
 It also writes machine-readable `crashes.json` (the curated catalogue) and
 `findings.json` (all unexpected outcomes). The Rust definitions are the single

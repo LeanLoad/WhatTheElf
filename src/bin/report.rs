@@ -29,6 +29,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     if !results.is_empty() {
         fs::write(out.join("findings.json"), findings_json(&results))?;
         println!("wrote {}/findings.json", out.display());
+        // Copy the raw captured stdout/stderr into the site so the matrix can
+        // fetch the exact file for a clicked cell.
+        let copied = copy_streams(root, &out, &results)?;
+        println!("copied {copied} output streams to {}/results/", out.display());
     }
     Ok(())
 }
@@ -104,6 +108,26 @@ fn findings_json(results: &Results) -> String {
         })
         .collect();
     serde_json::to_string_pretty(&arr).unwrap_or_default()
+}
+
+/// Copy each cell's captured `results/<backend>/<case>.{stdout,stderr}` into
+/// `<out>/results/...` so the matrix can fetch the exact file on click. Returns
+/// the number of stream files copied.
+fn copy_streams(root: &Path, out: &Path, results: &Results) -> Result<usize, Box<dyn Error>> {
+    let mut n = 0;
+    for (backend, case) in results.keys() {
+        let dst_dir = out.join("results").join(backend);
+        fs::create_dir_all(&dst_dir)?;
+        for ext in ["stdout", "stderr"] {
+            let name = format!("{case}.{ext}");
+            let src = root.join("results").join(backend).join(&name);
+            if src.is_file() {
+                fs::copy(&src, dst_dir.join(&name))?;
+                n += 1;
+            }
+        }
+    }
+    Ok(n)
 }
 
 fn fixture_len(root: &Path, id: &str) -> u64 {
@@ -351,22 +375,32 @@ th{background:#fafafa;font-weight:600;font-size:.82rem;text-transform:uppercase;
 td.cell{cursor:pointer}td.cell.sel{outline:2px solid #36c;outline-offset:-2px}\
 .detail{position:sticky;top:0;z-index:5;background:#fff;border:1px solid #ddd;border-radius:6px;padding:.6rem .8rem;margin:.5rem 0;box-shadow:0 2px 6px rgba(0,0,0,.08)}\
 .detail pre{white-space:pre-wrap;word-break:break-word;margin:.4rem 0 0;font-size:.82rem;color:#333;max-height:240px;overflow:auto}\
+.stream{margin-top:.5rem}.slabel{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:#888;font-weight:600}\
+.detail .stream pre{background:#0d1117;color:#c9d1d9;border-radius:5px;padding:.5rem .6rem;font-family:ui-monospace,Menlo,Consolas,monospace}\
 footer{margin:2rem 0 1rem;color:#999;font-size:.85rem}\
 code{background:#eef0f2;padding:.05rem .3rem;border-radius:4px;font-size:.85em}\
 </style>";
 
-/// Click-to-expand for matrix cells: fill #detail with backend·case·status·finding.
+/// Click-to-expand for matrix cells: show backend·case·status·finding, then
+/// fetch the cell's raw results/<backend>/<case>.{stdout,stderr} and append them.
 const MATRIX_JS: &str = "<script>\
 (function(){\
 var d=document.getElementById('detail');\
 function e(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}\
 function k(c){c=(c||'').toLowerCase();return c.indexOf('crash')>=0?'c-crash':(c.indexOf('hang')>=0||c.indexOf('timeout')>=0)?'c-hang':(c.indexOf('error')>=0||c.indexOf('reject')>=0)?'c-reject':c.indexOf('accept')>=0?'c-accept':'c-other';}\
+function get(p){return fetch(p).then(function(r){return r.ok?r.text():'';}).catch(function(){return '';});}\
+function block(label,path,v){return (v&&v.trim())?'<div class=stream><span class=slabel>'+label+' <a href=\"'+path+'\">raw</a></span><pre>'+e(v)+'</pre></div>':'';}\
 document.querySelectorAll('td.cell[data-b]').forEach(function(td){\
 td.addEventListener('click',function(){\
-var s=td.dataset;\
-d.innerHTML='<b>'+e(s.c)+'</b> &middot; <span class=mono>'+e(s.b)+'</span> &middot; <span class=\"badge '+k(s.cat)+'\">'+e(s.cat)+'</span> <span class=muted>'+e(s.st)+'</span><pre>'+e(s.f||'(no message captured)')+'</pre>';\
+var s=td.dataset;var dir='results/'+encodeURIComponent(s.b)+'/'+encodeURIComponent(s.c);\
+var head='<b>'+e(s.c)+'</b> &middot; <span class=mono>'+e(s.b)+'</span> &middot; <span class=\"badge '+k(s.cat)+'\">'+e(s.cat)+'</span> <span class=muted>'+e(s.st)+'</span><pre>'+e(s.f||'(no message captured)')+'</pre>';\
+d.innerHTML=head+'<p class=muted>loading output…</p>';\
 document.querySelectorAll('td.cell.sel').forEach(function(x){x.classList.remove('sel');});\
 td.classList.add('sel');\
+Promise.all([get(dir+'.stdout'),get(dir+'.stderr')]).then(function(r){\
+var body=block('stdout',dir+'.stdout',r[0])+block('stderr',dir+'.stderr',r[1]);\
+d.innerHTML=head+(body||'<p class=muted>(no captured output)</p>');\
+});\
 });\
 });\
 })();\
