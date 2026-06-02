@@ -229,12 +229,14 @@ fn summary(glibc: usize, musl: usize, results: &Results) -> String {
          loaders.</p>"
     ));
     h.push_str(
-        "<p>The headline: both loaders are <b>robust at their <code>--verify</code> gate but \
-         crash once they actually map and relocate a hostile object</b>. The crashes span the \
-         whole loader pipeline — segment mapping and <code>.bss</code> zero-fill, symbol \
-         resolution, REL/RELA/RELR relocation, dependency loading, and TLS setup. One input, \
-         <code>glibc_dyn_lsoname_oob</code> — a <code>PT_DYNAMIC</code> whose entry walk runs \
-         off into unmapped memory — crashes <b>glibc, musl, and llvm-objdump</b> alike.</p>",
+        "<p>The headline: cheap header validation turns these away — glibc's \
+         <code>--verify</code> rejects them all cleanly — but <b>actually mapping and \
+         relocating a hostile object, which is what any real load does, crashes both \
+         loaders</b>. The crashes span the whole pipeline — segment mapping and \
+         <code>.bss</code> zero-fill, symbol resolution, REL/RELA/RELR relocation, dependency \
+         loading, and TLS setup. One input, <code>glibc_dyn_lsoname_oob</code> — a \
+         <code>PT_DYNAMIC</code> whose entry walk runs off into unmapped memory — crashes \
+         <b>glibc, musl, and llvm-objdump</b> alike.</p>",
     );
     if !results.is_empty() {
         h.push_str(&format!(
