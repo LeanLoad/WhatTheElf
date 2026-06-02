@@ -299,6 +299,15 @@ pub(crate) fn first_line(path: &Path) -> Option<String> {
     BufReader::new(file).lines().find_map(Result::ok)
 }
 
+/// First line in `path` containing `needle`, if any.
+pub(crate) fn find_line(path: &Path, needle: &str) -> Option<String> {
+    let file = File::open(path).ok()?;
+    BufReader::new(file)
+        .lines()
+        .map_while(Result::ok)
+        .find(|line| line.contains(needle))
+}
+
 pub(crate) fn default_classification(
     status: &RunStatus,
     _stdout_path: &Path,
@@ -323,10 +332,25 @@ pub(crate) fn default_classification(
             finding: first_line(stderr_path)
                 .or_else(|| Some("backend rejected malformed input".to_string())),
         },
-        RunStatus::Signal(_) => Classification {
-            category: Category::Crash,
-            finding: Some("backend crashed".to_string()),
-        },
+        RunStatus::Signal(_) => {
+            // qemu-user (and similar emulators) actually execute the guest. When
+            // the *loaded program* faults, qemu prints "qemu: uncaught target
+            // signal N (...)" and re-raises it, so the qemu process dies with a
+            // signal — but the emulator/loader handled the input fine; it is the
+            // guest running (garbage) code that crashed, not a loader bug. Treat
+            // that as a graceful guest fault rather than a backend crash.
+            if let Some(line) = find_line(stderr_path, "uncaught target signal") {
+                Classification {
+                    category: Category::GracefulError,
+                    finding: Some(line),
+                }
+            } else {
+                Classification {
+                    category: Category::Crash,
+                    finding: Some("backend crashed".to_string()),
+                }
+            }
+        }
         RunStatus::Timeout => Classification {
             category: Category::Timeout,
             finding: Some("backend timed out".to_string()),
