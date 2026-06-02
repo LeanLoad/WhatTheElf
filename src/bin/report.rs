@@ -172,9 +172,9 @@ fn render_html(root: &Path, results: &Results) -> String {
             continue;
         }
         h.push_str(&format!("<h3>{}</h3>", esc(label)));
-        h.push_str("<table class=crashes><thead><tr><th>id<th>signal<th>fault site<th>bytes<th>details</tr></thead><tbody>");
+        h.push_str("<table class=crashes><thead><tr><th>id<th>signal<th>crashes<th>fault site<th>bytes<th>details</tr></thead><tbody>");
         for c in rows {
-            h.push_str(&crash_row(root, c));
+            h.push_str(&crash_row(root, c, results));
         }
         h.push_str("</tbody></table>");
     }
@@ -239,9 +239,11 @@ fn summary(glibc: usize, musl: usize, results: &Results) -> String {
          dynamic loaders (glibc, musl), the qemu-user emulator, and a panel of inspection tools \
          — looking for inputs that <em>crash</em> a backend rather than being cleanly accepted \
          or rejected. The corpus is <b>{n_struct}</b> hand-written structural cases plus \
-         <b>{n_crash}</b> AFL++-found crashes reduced to one representative per fault site \
-         (<b>{glibc}</b> glibc, <b>{musl}</b> musl, <b>{objdump}</b> llvm-objdump), all \
-         confirmed on the stock binaries.</p>",
+         <b>{n_crash}</b> AFL++-found crash inputs, the latter curated with analyzed fault \
+         sites and grouped by the target each was found against (<b>{glibc}</b> glibc, \
+         <b>{musl}</b> musl, <b>{objdump}</b> llvm-objdump). The per-backend counts below are \
+         higher: they count <em>every</em> distinct input that crashes a backend in the full \
+         matrix — structural cases included, and several inputs crash more than one backend.</p>",
         backends.len(),
         objdump = by(Target::LlvmObjdump),
     ));
@@ -281,15 +283,22 @@ fn summary(glibc: usize, musl: usize, results: &Results) -> String {
     h
 }
 
-fn crash_row(root: &Path, c: &Crash) -> String {
+fn crash_row(root: &Path, c: &Crash, results: &Results) -> String {
     let sigcls = match c.signal {
         Signal::Segv => "sig-segv",
         Signal::Bus => "sig-bus",
         Signal::Abort => "sig-abort",
     };
+    // Every backend that crashes on this input, per the matrix — surfaces
+    // cross-target crashes the per-target grouping would otherwise hide.
+    let crashers: String = crashing_backends(results, c.id)
+        .iter()
+        .map(|b| format!("<span class=\"badge c-crash\">{}</span> ", esc(b)))
+        .collect();
     format!(
         "<tr><td class=mono>{id}</td>\
          <td><span class=\"badge {sigcls}\">{sig}</span></td>\
+         <td>{crashers}</td>\
          <td class=mono>{site}</td>\
          <td class=num>{bytes}</td>\
          <td class=details>{details}</td></tr>",
@@ -299,6 +308,18 @@ fn crash_row(root: &Path, c: &Crash) -> String {
         bytes = fixture_len(root, c.id),
         details = esc(c.details),
     )
+}
+
+/// Backends that crash on a given input id, from the results matrix.
+fn crashing_backends<'a>(results: &'a Results, id: &str) -> Vec<&'a str> {
+    let mut v: Vec<&str> = results
+        .iter()
+        .filter(|((_, case), cell)| case == id && cell.category == "crash")
+        .map(|((b, _), _)| b.as_str())
+        .collect();
+    v.sort();
+    v.dedup();
+    v
 }
 
 /// Every backend×case where a backend did something *unexpected* — crashed,
