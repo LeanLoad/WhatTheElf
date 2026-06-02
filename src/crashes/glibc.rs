@@ -12,7 +12,7 @@
 use crate::crash::{Crash, Loader::Glibc, Repro::*, Signal::*};
 use crate::elf::{Ehdr, ImageSpec, Phdr, PF_R, PF_W, PF_X, PT_LOAD};
 
-/// Structured reproducer. Reduced from `crashes/crash_00_sig7.elf`.
+/// Structured reproducer. Reduced from `crashes/glibc_00_sig7.elf`.
 pub const LOAD_MEMSZ_PAST_EOF: Crash = Crash {
     id: "glibc_load_memsz_past_eof",
     loader: Glibc,
@@ -24,7 +24,7 @@ is only 0xc0 bytes long. _dl_map_segments mmaps the segment from the (short) fil
 zero-fills the gap between p_filesz and the end of the segment's last page with \
 `memset((void *) zero, 0, zeropage - zero)` (dl-map-segments.h:177) to create the .bss. \
 Because p_filesz points past the real end of the file, that page has no file backing and \
-the store raises SIGBUS. The original fuzzer artifact (crashes/crash_00_sig7.elf) used a \
+the store raises SIGBUS. The original fuzzer artifact (crashes/glibc_00_sig7.elf) used a \
 176-byte file with p_memsz≈0x6_0000_0002, giving the loader a 24 GiB maplength; the \
 reproducer keeps the essential condition (filesz/memsz past EOF, memsz>filesz) minimal.",
     spec: || {
@@ -41,7 +41,7 @@ reproducer keeps the essential condition (filesz/memsz past EOF, memsz>filesz) m
     },
 };
 
-/// Structured reproducer. Reduced from `crashes/crash_01_sig11.elf`.
+/// Structured reproducer. Reduced from `crashes/glibc_01_sig11.elf`.
 pub const LOAD_WILD_VADDR_PHDR: Crash = Crash {
     id: "glibc_load_wild_vaddr_phdr",
     loader: Glibc,
@@ -56,7 +56,7 @@ p_filesz=0xb000_0000 and an absurd p_align (0x0600_0000_0200_0000), so the addre
 computes for l_phdr does not fall inside any mapped segment and dereferencing ph[-1] faults \
 (SIGSEGV, or SIGBUS when the bad address lands on a file-backed page past EOF). The second \
 PT_LOAD provides the offset/vaddr mismatch that drives l_phdr off the mapping. Reduced from \
-crashes/crash_01_sig11.elf (the corpus also held byte-variants crash_02/03/05).",
+crashes/glibc_01_sig11.elf (the corpus also held byte-variants glibc_02/03/05).",
     spec: || {
         ImageSpec::new(0xb0, Ehdr::exec64().phoff(0x40).phnum(2).entry(0x400080))
             .phdr(
@@ -83,7 +83,7 @@ crashes/crash_01_sig11.elf (the corpus also held byte-variants crash_02/03/05)."
 };
 
 /// Raw artifact: the malformed PT_DYNAMIC makes the dynamic walk run into
-/// garbage, so there is no clean structural form. `crashes/crash_07_sig11.elf`.
+/// garbage, so there is no clean structural form. `crashes/glibc_07_sig11.elf`.
 pub const DYN_LSONAME_OOB: Crash = Crash {
     id: "glibc_dyn_lsoname_oob",
     loader: Glibc,
@@ -99,11 +99,11 @@ elf_get_dynamic_info populated l_info[] by walking the dynamic array until DT_NU
 overlapping/oversized PT_DYNAMIC makes that walk run past the mapped bytes into adjacent \
 memory; an entry there looks like DT_SONAME/DT_STRTAB pointing out of the mapping, so \
 l_soname dereferences a wild l_info[] pointer and faults.",
-    spec: || ImageSpec::raw(include_bytes!("../../crashes/crash_07_sig11.elf").to_vec()),
+    spec: || ImageSpec::raw(include_bytes!("../../crashes/glibc_07_sig11.elf").to_vec()),
 };
 
 /// Raw artifact: data flow is inlined away under -O2 and not fully pinned.
-/// `crashes/crash_04_sig11.elf`.
+/// `crashes/glibc_04_sig11.elf`.
 pub const RTLD_STARTUP_STRCMP: Crash = Crash {
     id: "glibc_rtld_startup_strcmp",
     loader: Glibc,
@@ -117,13 +117,13 @@ attributed to dl_main at rtld.c:1687 — the start-up step that reconciles the l
 libname with its soname. strcmp dereferences a string pointer that ends up out of range, \
 but at -O2 the rtld start-up code is heavily inlined, so the exact field->pointer chain is \
 not fully pinned down; this is recorded honestly as an observed SIGSEGV string-deref reached \
-from that code rather than a clean reproducer. crash_06 is a second byte-variant.",
-    spec: || ImageSpec::raw(include_bytes!("../../crashes/crash_04_sig11.elf").to_vec()),
+from that code rather than a clean reproducer. glibc_06 is a second byte-variant.",
+    spec: || ImageSpec::raw(include_bytes!("../../crashes/glibc_04_sig11.elf").to_vec()),
 };
 
 /// Raw artifact: layout-sensitive variant of [`LOAD_WILD_VADDR_PHDR`] that
 /// faults only under ASLR (not under gdb), so a deterministic builder cannot pin
-/// it. `crashes/crash_03_sig11.elf`.
+/// it. `crashes/glibc_03_sig11.elf`.
 pub const WILD_VADDR_ASLR: Crash = Crash {
     id: "glibc_wild_vaddr_aslr",
     loader: Glibc,
@@ -135,5 +135,5 @@ the loader computes l_phdr outside the real mapping. Here whether the computed a
 an unmapped page depends on the randomized mmap base, so it SIGSEGVs under normal ASLR but \
 runs clean under gdb (ASLR disabled). Kept as the raw artifact because the trigger is \
 layout-dependent and not reproducible deterministically.",
-    spec: || ImageSpec::raw(include_bytes!("../../crashes/crash_03_sig11.elf").to_vec()),
+    spec: || ImageSpec::raw(include_bytes!("../../crashes/glibc_03_sig11.elf").to_vec()),
 };

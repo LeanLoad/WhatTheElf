@@ -9,7 +9,7 @@ use std::error::Error;
 use std::fs;
 use std::path::Path;
 
-use whattheelf::crash::{Crash, Loader, Repro, Signal};
+use whattheelf::crash::{Crash, Loader, Signal};
 use whattheelf::{cases, crashes};
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -168,7 +168,7 @@ fn render_html(root: &Path, results: &Results) -> String {
     h.push_str("<h2>Loader crashes</h2>");
     for (loader, label) in [(Loader::Glibc, "glibc — ld.so --verify"), (Loader::Musl, "musl — ld-musl --list")] {
         h.push_str(&format!("<h3>{}</h3>", esc(label)));
-        h.push_str("<table class=crashes><thead><tr><th>id<th>signal<th>repro<th>fault site<th>bytes<th>details</tr></thead><tbody>");
+        h.push_str("<table class=crashes><thead><tr><th>id<th>signal<th>fault site<th>bytes<th>details</tr></thead><tbody>");
         for c in crashes::ALL.iter().filter(|c| c.loader == loader) {
             h.push_str(&crash_row(root, c));
         }
@@ -214,20 +214,14 @@ fn crash_row(root: &Path, c: &Crash) -> String {
         Signal::Segv => "sig-segv",
         Signal::Bus => "sig-bus",
     };
-    let reprocls = match c.repro {
-        Repro::Structured => "repro-struct",
-        Repro::RawArtifact => "repro-raw",
-    };
     format!(
         "<tr><td class=mono>{id}</td>\
          <td><span class=\"badge {sigcls}\">{sig}</span></td>\
-         <td><span class=\"badge {reprocls}\">{repro}</span></td>\
          <td class=mono>{site}</td>\
          <td class=num>{bytes}</td>\
          <td class=details>{details}</td></tr>",
         id = esc(c.id),
         sig = c.signal.name(),
-        repro = c.repro.name(),
         site = esc(c.site),
         bytes = fixture_len(root, c.id),
         details = esc(c.details),
@@ -366,7 +360,6 @@ th{background:#fafafa;font-weight:600;font-size:.82rem;text-transform:uppercase;
 .num{text-align:right;font-variant-numeric:tabular-nums;color:#666}\
 .badge{display:inline-block;padding:.05rem .45rem;border-radius:99px;font-size:.78rem;font-weight:600;white-space:nowrap}\
 .sig-segv{background:#fde2e1;color:#a11}.sig-bus{background:#fff0d6;color:#a60}\
-.repro-struct{background:#dcefe0;color:#176}.repro-raw{background:#e6e6ef;color:#449}\
 .findcell{line-height:2.1}.findings .badge{font-family:ui-monospace,monospace}\
 .scroll{overflow-x:auto}.matrix td,.matrix th{white-space:nowrap}\
 .cell{text-align:center;font-size:.78rem}\

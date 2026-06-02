@@ -116,15 +116,14 @@ long-form `details` analysis — all as typed data, so it can be rendered.
 
 Both `cases::ALL` and `crashes::ALL` flow through `gen` → `fixtures/` → `check`.
 All crash inputs reproduce on the stock system loaders; raw bytes live under
-tracked `crashes/` and `crashes-musl/`.
+tracked `crashes/`.
 
 ## Report
 
 `./report.sh [OUT_DIR]` (default `gh-pages/`, the published-site worktree)
 renders a self-contained `index.html`:
 
-* the crash catalogue (grouped by loader, with signal / site / reproducer-kind /
-  details),
+* the crash catalogue (grouped by loader, with signal / site / details),
 * an **Unexpected outcomes** section — every backend×case that crashed, hung, or
   errored (vs a clean accept/reject), which surfaces findings beyond the curated
   `crashes::ALL` (e.g. `llvm-objdump` crashing, or a structural case that also
