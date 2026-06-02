@@ -9,7 +9,7 @@ use std::error::Error;
 use std::fs;
 use std::path::Path;
 
-use whattheelf::crash::{Crash, Signal, Target};
+use whattheelf::crash::{Crash, Target};
 use whattheelf::{cases, crashes};
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -172,9 +172,9 @@ fn render_html(root: &Path, results: &Results) -> String {
             continue;
         }
         h.push_str(&format!("<h3>{}</h3>", esc(label)));
-        h.push_str("<table class=crashes><thead><tr><th>id<th>signal<th>crashes<th>fault site<th>bytes<th>details</tr></thead><tbody>");
+        h.push_str("<table class=crashes><thead><tr><th>id<th>fault site<th>bytes<th>details</tr></thead><tbody>");
         for c in rows {
-            h.push_str(&crash_row(root, c, results));
+            h.push_str(&crash_row(root, c));
         }
         h.push_str("</tbody></table>");
     }
@@ -283,43 +283,17 @@ fn summary(glibc: usize, musl: usize, results: &Results) -> String {
     h
 }
 
-fn crash_row(root: &Path, c: &Crash, results: &Results) -> String {
-    let sigcls = match c.signal {
-        Signal::Segv => "sig-segv",
-        Signal::Bus => "sig-bus",
-        Signal::Abort => "sig-abort",
-    };
-    // Every backend that crashes on this input, per the matrix — surfaces
-    // cross-target crashes the per-target grouping would otherwise hide.
-    let crashers: String = crashing_backends(results, c.id)
-        .iter()
-        .map(|b| format!("<span class=\"badge c-crash\">{}</span> ", esc(b)))
-        .collect();
+fn crash_row(root: &Path, c: &Crash) -> String {
     format!(
         "<tr><td class=mono>{id}</td>\
-         <td><span class=\"badge {sigcls}\">{sig}</span></td>\
-         <td>{crashers}</td>\
          <td class=mono>{site}</td>\
          <td class=num>{bytes}</td>\
          <td class=details>{details}</td></tr>",
         id = esc(c.id),
-        sig = c.signal.name(),
         site = esc(c.site),
         bytes = fixture_len(root, c.id),
         details = esc(c.details),
     )
-}
-
-/// Backends that crash on a given input id, from the results matrix.
-fn crashing_backends<'a>(results: &'a Results, id: &str) -> Vec<&'a str> {
-    let mut v: Vec<&str> = results
-        .iter()
-        .filter(|((_, case), cell)| case == id && cell.category == "crash")
-        .map(|((b, _), _)| b.as_str())
-        .collect();
-    v.sort();
-    v.dedup();
-    v
 }
 
 /// Every backend×case where a backend did something *unexpected* — crashed,
@@ -455,7 +429,6 @@ th{background:#fafafa;font-weight:600;font-size:.82rem;text-transform:uppercase;
 .details{color:#333;font-size:.88rem}.tags{color:#777;font-size:.85rem;white-space:nowrap}\
 .num{text-align:right;font-variant-numeric:tabular-nums;color:#666}\
 .badge{display:inline-block;padding:.05rem .45rem;border-radius:99px;font-size:.78rem;font-weight:600;white-space:nowrap}\
-.sig-segv{background:#fde2e1;color:#a11}.sig-bus{background:#fff0d6;color:#a60}.sig-abort{background:#ede1fb;color:#73c}\
 .findcell{line-height:2.1}.findings .badge{font-family:ui-monospace,monospace}\
 .scroll{overflow-x:auto}.matrix td,.matrix th{white-space:nowrap}\
 .cell{text-align:center;font-size:.78rem}\
