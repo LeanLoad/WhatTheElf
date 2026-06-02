@@ -1,0 +1,313 @@
+Format: ELF 64-bit
+FileHeader {
+    Ident {
+        Magic: [7F, 45, 4C, 46]
+        Class: ELFCLASS64 (0x2)
+        Data: ELFDATA2LSB (0x1)
+        Version: EV_CURRENT (0x1)
+        OsAbi: ELFOSABI_SYSV (0x0)
+        AbiVersion: 0x0
+        Unused: [0, 0, 0, 0, 0, 0, 0]
+    }
+    Type: ET_EXEC (0x2)
+    Machine: EM_X86_64 (0x3E)
+    Version: EV_CURRENT (0x1)
+    Entry: 0x400080
+    ProgramHeaderOffset: 0x40
+    SectionHeaderOffset: 0x0
+    Flags: 0x0
+    HeaderSize: 0x40
+    ProgramHeaderEntrySize: 0x38
+    ProgramHeaderCount: 28
+    SectionHeaderEntrySize: 0x40
+    SectionHeaderCount: 0
+    SectionHeaderStringTableIndex: SHN_UNDEF (0x0)
+}
+ProgramHeader {
+    Type: PT_LOAD (0x1)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x1000
+    MemorySize: 0x3000
+    Flags: 0x6
+        PF_W (0x2)
+        PF_R (0x4)
+    Align: 0x1000
+}
+ProgramHeader {
+    Type: PT_DYNAMIC (0x2)
+    Offset: 0x8B0
+    VirtualAddress: 0x9D8
+    PhysicalAddress: 0x60
+    FileSize: 0x8
+    MemorySize: 0x0
+    Flags: 0x6
+        PF_W (0x2)
+        PF_R (0x4)
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x200000015
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x5FFFF05000000
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0xF90000000000
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x1000000000000000
+    PhysicalAddress: 0xB000000000000000
+    FileSize: 0xB000000000000000
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x40000000000000
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x1
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x2000000000
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x1000000000000000
+    VirtualAddress: 0x2000000000000
+    PhysicalAddress: 0x8B0000000060000
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0xFFDE0000
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x3E00020000000000
+    Flags: 0x0
+    Align: 0x4000800000000100
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x200000000000
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0xFFFFFFFFFFFFFF00
+    MemorySize: 0xFFFFFFFFFFFFFFFF
+    Flags: 0x4000
+    Align: 0xFFFFFFFFFFFFFFFF
+}
+ProgramHeader {
+    Type: 0xFFFFFFFF
+    Offset: 0xFFFFFFFFFFFFFFFF
+    VirtualAddress: 0xFFFFFFFFFFFFFFFF
+    PhysicalAddress: 0xFFFFFFFFFF
+    FileSize: 0x0
+    MemorySize: 0xFFFFFFFF00000000
+    Flags: 0xFFFFFFFF
+        PF_X (0x1)
+        PF_W (0x2)
+        PF_R (0x4)
+        <other> (0xFFFFFFF8)
+    Align: 0xFFFFFFFFFFFFFFFF
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0xFF0000
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}
+ProgramHeader {
+    Type: PT_NULL (0x0)
+    Offset: 0x0
+    VirtualAddress: 0x0
+    PhysicalAddress: 0x0
+    FileSize: 0x0
+    MemorySize: 0x0
+    Flags: 0x0
+    Align: 0x0
+}

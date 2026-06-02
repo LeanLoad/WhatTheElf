@@ -1,0 +1,5 @@
+readelf: Warning: [ 1]: Link field (2) should index a string section.
+readelf: Warning: [ 2]: Link field (0) should index a string section.
+readelf: Warning: possibly corrupt ELF header - it has a non-zero program header offset, but no program headers
+readelf: Warning: local symbol 0 found at index >= <no-strings>'s sh_info value of 0
+readelf: Warning: local symbol 0 found at index >= <no-strings>'s sh_info value of 0

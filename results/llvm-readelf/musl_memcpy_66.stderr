@@ -1,0 +1,2 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/musl_memcpy_66': invalid PT_DYNAMIC size (0x8)
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/musl_memcpy_66': no valid dynamic table was found

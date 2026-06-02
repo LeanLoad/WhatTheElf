@@ -1,0 +1,9 @@
+
+/users/szhong/LeanLoad/WhatTheElf/fixtures/glibc_rtld_startup_strcmp:     file format elf64-x86-64
+
+Program Header:
+    LOAD off    0x0000000000000000 vaddr 0x00000000b0000000 paddr 0x0100000000000000 align 2**0
+         filesz 0x0000000006010000 memsz 0x0000000000000000 flags rw-
+  INTERP off    0x00b0000000000000 vaddr 0x0000000000000000 paddr 0x0000000001010246 align 2**4
+         filesz 0x3e00020000000000 memsz 0x000080000000007f flags ---
+

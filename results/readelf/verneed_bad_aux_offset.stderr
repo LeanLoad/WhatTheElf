@@ -1,0 +1,2 @@
+readelf: Warning: possibly corrupt ELF header - it has a non-zero program header offset, but no program headers
+readelf: Warning: Missing Version Needs information

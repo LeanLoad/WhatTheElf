@@ -1,0 +1,1 @@
+llvm-readelf: error: '/users/szhong/LeanLoad/WhatTheElf/fixtures/shdr_overlaps_ehdr': a section [index 0] has an invalid sh_name (0x40) offset which goes past the end of the section name string table

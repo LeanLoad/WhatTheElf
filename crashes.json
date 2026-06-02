@@ -1,0 +1,155 @@
+[
+  {
+    "bytes": 192,
+    "details": "A single PT_LOAD declares p_filesz=0x1800 and p_memsz=0x2000 in a file that is only 0xc0 bytes long. _dl_map_segments mmaps the segment from the (short) file, then zero-fills the gap between p_filesz and the end of the segment's last page with `memset((void *) zero, 0, zeropage - zero)` (dl-map-segments.h:177) to create the .bss. Because p_filesz points past the real end of the file, that page has no file backing and the store raises SIGBUS. The original fuzzer artifact (crashes/glibc_00_sig7.elf) used a 176-byte file with p_memsz≈0x6_0000_0002, giving the loader a 24 GiB maplength; the reproducer keeps the essential condition (filesz/memsz past EOF, memsz>filesz) minimal.",
+    "id": "glibc_load_memsz_past_eof",
+    "loader": "glibc",
+    "repro": "structured",
+    "signal": "SIGBUS",
+    "site": "_dl_map_segments memset (dl-map-segments.h:177)"
+  },
+  {
+    "bytes": 176,
+    "details": "After mapping the segments, _dl_map_object_from_fd walks the program headers backward looking for PT_GNU_PROPERTY: `for (ph = &l->l_phdr[l->l_phnum]; ph != l->l_phdr; --ph) if (ph[-1].p_type == PT_GNU_PROPERTY)` (dl-load.c:1342). l->l_phdr is derived from the load layout / PT_PHDR. The first PT_LOAD here has a wild p_vaddr (0xb000_0000), p_filesz=0xb000_0000 and an absurd p_align (0x0600_0000_0200_0000), so the address glibc computes for l_phdr does not fall inside any mapped segment and dereferencing ph[-1] faults (SIGSEGV, or SIGBUS when the bad address lands on a file-backed page past EOF). The second PT_LOAD provides the offset/vaddr mismatch that drives l_phdr off the mapping. Reduced from crashes/glibc_01_sig11.elf (the corpus also held byte-variants glibc_02/03/05).",
+    "id": "glibc_load_wild_vaddr_phdr",
+    "loader": "glibc",
+    "repro": "structured",
+    "signal": "SIGBUS",
+    "site": "_dl_map_object_from_fd phdr rescan (dl-load.c:1342)"
+  },
+  {
+    "bytes": 176,
+    "details": "The object pairs a PT_LOAD (vaddr 0xb000_0000) with a PT_DYNAMIC at p_offset=0xe, vaddr 0xb000_0000 (overlapping the load) and p_filesz=0xffff_b000_0080_0000. _dl_map_object_from_fd reaches the 'did we just load libc.so?' check at dl-load.c:1429: `l_soname(l) != NULL && strcmp(l_soname(l), LIBC_SO)`. l_soname returns `D_PTR(l, l_info[DT_STRTAB]) + l_info[DT_SONAME]->d_un.d_val` (ldsodefs.h:99). elf_get_dynamic_info populated l_info[] by walking the dynamic array until DT_NULL, but the overlapping/oversized PT_DYNAMIC makes that walk run past the mapped bytes into adjacent memory; an entry there looks like DT_SONAME/DT_STRTAB pointing out of the mapping, so l_soname dereferences a wild l_info[] pointer and faults.",
+    "id": "glibc_dyn_lsoname_oob",
+    "loader": "glibc",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "l_soname (ldsodefs.h:99, from dl-load.c:1429)"
+  },
+  {
+    "bytes": 203,
+    "details": "A 203-byte object with a PT_LOAD plus a PT_INTERP whose fields are wildly out of range (p_filesz=0x3e00_0200_0000_0000, p_offset=0xb0_0000_0000_0000) and no valid PT_DYNAMIC. The instrumented build faults in strcmp (strcmp-sse2.S:160) with the caller attributed to dl_main at rtld.c:1687 — the start-up step that reconciles the loader's own libname with its soname. strcmp dereferences a string pointer that ends up out of range, but at -O2 the rtld start-up code is heavily inlined, so the exact field->pointer chain is not fully pinned down; this is recorded honestly as an observed SIGSEGV string-deref reached from that code rather than a clean reproducer. glibc_06 is a second byte-variant.",
+    "id": "glibc_rtld_startup_strcmp",
+    "loader": "glibc",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "strcmp from dl_main start-up (rtld.c:1687)"
+  },
+  {
+    "bytes": 176,
+    "details": "Two PT_LOADs with wild p_vaddr/p_offset, same family as glibc_load_wild_vaddr_phdr: the loader computes l_phdr outside the real mapping. Here whether the computed address hits an unmapped page depends on the randomized mmap base, so it SIGSEGVs under normal ASLR but runs clean under gdb (ASLR disabled). Kept as the raw artifact because the trigger is layout-dependent and not reproducible deterministically.",
+    "id": "glibc_wild_vaddr_aslr",
+    "loader": "glibc",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "_dl_map_object_from_fd phdr rescan (dl-load.c:1342)"
+  },
+  {
+    "bytes": 2657,
+    "details": "Symbol lookup over a malformed SysV hash table: sysv_lookup walks for (i=hashtab[2+h%hashtab[0]]; i; i=hashtab[2+hashtab[0]+i]) and compares strings+syms[i].st_name (dynlink.c:261). Bad DT_HASH/DT_SYMTAB/DT_STRTAB drive the chain indices out of bounds.",
+    "id": "musl_sysv_lookup_261",
+    "loader": "musl",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "sysv_lookup (dynlink.c:261)"
+  },
+  {
+    "bytes": 4264,
+    "details": "While relocating the object, do_relocs dereferences the symbol/string tables built from a malformed dynamic section: sym = syms + sym_index; name = strings + sym->st_name (dynlink.c:430). Bad DT_SYMTAB/DT_STRTAB make these pointers land outside the mapping; both SIGSEGV and SIGBUS (file-backed page past EOF) were observed here.",
+    "id": "musl_reloc_all_430",
+    "loader": "musl",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "reloc_all (dynlink.c:430)"
+  },
+  {
+    "bytes": 4272,
+    "details": "Resolving DT_NEEDED dependencies: each dependency name is strtab + d_val, then load_library(name,...) dereferences it at 'if (!*name)' (dynlink.c:1067). A wild DT_STRTAB makes the name pointer point outside the image, so the first byte read faults.",
+    "id": "musl_load_direct_deps_1067",
+    "loader": "musl",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "load_direct_deps (dynlink.c:1067)"
+  },
+  {
+    "bytes": 2679,
+    "details": "Processing DT_RELR relative relocations: reloc_addr = laddr(dso, relr[0]); *reloc_addr++ += base (dynlink.c:570). A crafted RELR table decodes to addresses outside the mapping, so the relocation write hits unmapped memory (SIGSEGV) or a file-backed page past EOF (SIGBUS) - both signals were observed at this site.",
+    "id": "musl_do_relr_relocs_570",
+    "loader": "musl",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "do_relr_relocs (dynlink.c:570)"
+  },
+  {
+    "bytes": 2657,
+    "details": "__dls3 drives loading + relocation of the crafted object; the fault occurs in the relocation pass it invokes (reloc_all/do_relocs at dynlink.c:1414) over malformed dynamic tables.",
+    "id": "musl___dls3_1414",
+    "loader": "musl",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "__dls3 (dynlink.c:1414)"
+  },
+  {
+    "bytes": 4291,
+    "details": "map_library zeroes the .bss tail of a PT_LOAD: brk=base+p_vaddr+p_filesz; memset((void*)brk, 0, pgbrk-brk & PAGE_SIZE-1) (dynlink.c:847). When p_filesz runs past the real end of the file the page being zeroed has no file backing, so the store raises SIGBUS. musl analogue of the glibc _dl_map_segments zero-fill crash.",
+    "id": "musl_memset_847",
+    "loader": "musl",
+    "repro": "raw-artifact",
+    "signal": "SIGBUS",
+    "site": "memset (dynlink.c:847)"
+  },
+  {
+    "bytes": 4248,
+    "details": "Applying a REL_GOT/REL_PLT relocation: *reloc_addr = sym_val + addend (dynlink.c:473). reloc_addr is laddr(dso, r_offset) from a crafted relocation whose offset lands outside the mapping, so the write faults.",
+    "id": "musl_do_relocs_473",
+    "loader": "musl",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "do_relocs (dynlink.c:473)"
+  },
+  {
+    "bytes": 2669,
+    "details": "Applying a REL_COPY relocation: memcpy(reloc_addr, (void*)sym_val, sym->st_size) (dynlink.c:486). Crafted symbol/relocation values give a wild destination, source, or size, so the copy faults.",
+    "id": "musl_do_relocs_486",
+    "loader": "musl",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "do_relocs (dynlink.c:486)"
+  },
+  {
+    "bytes": 4293,
+    "details": "do_relocs resolves a relocation's symbol via the (malformed) DT_SYMTAB/DT_STRTAB and looks it up with find_sym (dynlink.c:345); bad tables drive the lookup out of bounds.",
+    "id": "musl_do_relocs_345",
+    "loader": "musl",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "do_relocs (dynlink.c:345)"
+  },
+  {
+    "bytes": 4272,
+    "details": "After mapping segments, map_library scans the dynamic array for DT_TEXTREL: for (i=0; ((size_t*)(base+dyn))[i]; i+=2) (dynlink.c:852). A bogus PT_DYNAMIC vaddr makes base+dyn point outside the mapping, so the scan reads unmapped memory.",
+    "id": "musl___dls3_852",
+    "loader": "musl",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "__dls3 (dynlink.c:852)"
+  },
+  {
+    "bytes": 2664,
+    "details": "Setting up TLS, __copy_tls copies each module's TLS image: memcpy(mem - p->offset, p->image, p->len) (__init_tls.c:66). A crafted PT_TLS gives a wild offset/image/len, so the copy reads or writes outside the allocated TLS block.",
+    "id": "musl_memcpy_66",
+    "loader": "musl",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "__copy_tls memcpy (__init_tls.c:66)"
+  },
+  {
+    "bytes": 15320,
+    "details": "Mutating a valid shared object and parsing it with `llvm-objdump -p` SIGSEGVs inside LLVM's object-file parsing — LLVM's crash handler fires (\"PLEASE submit a bug report to the LLVM project\"). Found by AFL++ FRIDA-mode binary-only fuzzing of the installed tool; the distribution binary is stripped so the exact LLVM function is not pinned down. Confirmed to reproduce on stock llvm-objdump 18.",
+    "id": "objdump_so_sigsegv",
+    "loader": "llvm-objdump",
+    "repro": "raw-artifact",
+    "signal": "SIGSEGV",
+    "site": "LLVM object parser (llvm-objdump -p)"
+  }
+]

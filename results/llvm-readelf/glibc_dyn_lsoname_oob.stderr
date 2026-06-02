@@ -1,0 +1,1 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/glibc_dyn_lsoname_oob': PT_DYNAMIC segment offset (0xe) + file size (0xffffb00000800000) exceeds the size of the file (0xb0)

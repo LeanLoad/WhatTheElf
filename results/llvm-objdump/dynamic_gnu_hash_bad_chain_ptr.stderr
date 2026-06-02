@@ -1,0 +1,1 @@
+llvm-objdump: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/dynamic_gnu_hash_bad_chain_ptr': dynamic sections must be DT_NULL terminated

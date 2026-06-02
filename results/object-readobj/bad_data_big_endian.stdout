@@ -1,0 +1,25 @@
+Format: ELF 64-bit
+FileHeader {
+    Ident {
+        Magic: [7F, 45, 4C, 46]
+        Class: ELFCLASS64 (0x2)
+        Data: ELFDATA2MSB (0x2)
+        Version: EV_CURRENT (0x1)
+        OsAbi: ELFOSABI_SYSV (0x0)
+        AbiVersion: 0x0
+        Unused: [0, 0, 0, 0, 0, 0, 0]
+    }
+    Type: 0x200
+    Machine: 0x3E00
+    Version: 0x1000000
+    Entry: 0x8000400000000000
+    ProgramHeaderOffset: 0x4000000000000000
+    SectionHeaderOffset: 0x0
+    Flags: 0x0
+    HeaderSize: 0x4000
+    ProgramHeaderEntrySize: 0x3800
+    ProgramHeaderCount: 0
+    SectionHeaderEntrySize: 0x4000
+    SectionHeaderCount: 0
+    SectionHeaderStringTableIndex: SHN_UNDEF (0x0)
+}

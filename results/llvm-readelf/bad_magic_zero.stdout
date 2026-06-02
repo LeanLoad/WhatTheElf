@@ -1,0 +1,30 @@
+
+File: /users/szhong/LeanLoad/WhatTheElf/fixtures/bad_magic_zero
+Format: COFF-<unknown arch>
+Arch: unknown
+AddressSize: 32bit
+ImageFileHeader {
+  Machine: IMAGE_FILE_MACHINE_UNKNOWN (0x0)
+  SectionCount: 0
+  TimeDateStamp: 1970-01-01 18:16:34 (0x10102)
+  PointerToSymbolTable: 0x0
+  SymbolCount: 0
+  StringTableSize: 0
+  OptionalHeaderSize: 2
+  Characteristics [ (0x3E)
+    IMAGE_FILE_AGGRESSIVE_WS_TRIM (0x10)
+    IMAGE_FILE_EXECUTABLE_IMAGE (0x2)
+    IMAGE_FILE_LARGE_ADDRESS_AWARE (0x20)
+    IMAGE_FILE_LINE_NUMS_STRIPPED (0x4)
+    IMAGE_FILE_LOCAL_SYMS_STRIPPED (0x8)
+  ]
+}
+Sections [
+]
+Relocations [
+]
+UnwindInformation [
+  unsupported Image Machine: IMAGE_FILE_MACHINE_UNKNOWN (0x0)
+]
+Symbols [
+]

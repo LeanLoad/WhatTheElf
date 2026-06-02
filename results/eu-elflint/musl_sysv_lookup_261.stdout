@@ -1,0 +1,9 @@
+static executable cannot have dynamic sections
+program header entry 1: file size greater than memory size
+program header entry 5: alignment not a power of 2
+program header entry 10: file size greater than memory size
+program header entry 20: alignment not a power of 2
+program header entry 21: alignment not a power of 2
+program header entry 22: alignment not a power of 2
+program header entry 23: unknown program header entry type 0xffffffff
+program header entry 23: alignment not a power of 2

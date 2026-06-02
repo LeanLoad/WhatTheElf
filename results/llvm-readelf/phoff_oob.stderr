@@ -1,0 +1,4 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/phoff_oob': unable to read program headers to locate the PT_DYNAMIC segment: program headers are longer than binary of size 64: e_phoff = 0x10000, e_phnum = 1, e_phentsize = 56
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/phoff_oob': unable to dump program headers: program headers are longer than binary of size 64: e_phoff = 0x10000, e_phnum = 1, e_phentsize = 56
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/phoff_oob': can't read program headers to build section to segment mapping: program headers are longer than binary of size 64: e_phoff = 0x10000, e_phnum = 1, e_phentsize = 56
+llvm-readelf: error: '/users/szhong/LeanLoad/WhatTheElf/fixtures/phoff_oob': program headers are longer than binary of size 64: e_phoff = 0x10000, e_phnum = 1, e_phentsize = 56

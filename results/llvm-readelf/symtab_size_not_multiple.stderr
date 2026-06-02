@@ -1,0 +1,1 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/symtab_size_not_multiple': unable to read symbols from the SHT_SYMTAB section: section [index 1] has an invalid sh_size (25) which is not a multiple of its sh_entsize (24)

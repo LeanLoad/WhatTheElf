@@ -1,0 +1,7 @@
+invalid number of program header entries
+section [ 1]: invalid name
+section [ 1] '<invalid>': size not multiple of entry size
+cannot get section header
+section [ 1] '<invalid>': entry size is does not match ElfXX_Sym
+section [ 2]: invalid name
+cannot get section header

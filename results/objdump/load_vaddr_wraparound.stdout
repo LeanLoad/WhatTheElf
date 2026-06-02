@@ -1,0 +1,7 @@
+
+/users/szhong/LeanLoad/WhatTheElf/fixtures/load_vaddr_wraparound:     file format elf64-x86-64
+
+Program Header:
+    LOAD off    0x0000000000000000 vaddr 0xfffffffffffff000 paddr 0xfffffffffffff000 align 2**12
+         filesz 0x0000000000002000 memsz 0x0000000000002000 flags r-x
+

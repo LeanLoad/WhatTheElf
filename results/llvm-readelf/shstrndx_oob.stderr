@@ -1,0 +1,2 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/shstrndx_oob': section header string table index 7 does not exist
+llvm-readelf: error: '/users/szhong/LeanLoad/WhatTheElf/fixtures/shstrndx_oob': section header string table index 7 does not exist

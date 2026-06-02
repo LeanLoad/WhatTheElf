@@ -1,0 +1,2 @@
+readelf: Warning: Section 1 has an out of range sh_link value of 16777216
+readelf: Warning: [ 1]: Link field (16777216) should index a string section.

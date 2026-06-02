@@ -1,0 +1,2 @@
+readelf: Error: Section headers are not available!
+readelf: Error: the dynamic segment offset + size exceeds the size of the file

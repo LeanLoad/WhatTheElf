@@ -1,0 +1,15 @@
+PLEASE submit a bug report to https://github.com/llvm/llvm-project/issues/ and include the crash backtrace.
+Stack dump:
+0.	Program arguments: llvm-objdump -p /users/szhong/LeanLoad/WhatTheElf/fixtures/musl___dls3_852
+ #0 0x00007c5e993a63bf llvm::sys::PrintStackTrace(llvm::raw_ostream&, int) (/usr/lib/llvm-18/bin/../lib/libLLVM.so.18.1+0xda63bf)
+ #1 0x00007c5e993a44f9 llvm::sys::RunSignalHandlers() (/usr/lib/llvm-18/bin/../lib/libLLVM.so.18.1+0xda44f9)
+ #2 0x00007c5e993a6b00 (/usr/lib/llvm-18/bin/../lib/libLLVM.so.18.1+0xda6b00)
+ #3 0x00007c5e97e45330 (/lib/x86_64-linux-gnu/libc.so.6+0x45330)
+ #4 0x0000637e382bce91 (/usr/lib/llvm-18/bin/llvm-objdump+0x64e91)
+ #5 0x0000637e382887f7 (/usr/lib/llvm-18/bin/llvm-objdump+0x307f7)
+ #6 0x0000637e3827e7fe (/usr/lib/llvm-18/bin/llvm-objdump+0x267fe)
+ #7 0x0000637e3831a3f3 (/usr/lib/llvm-18/bin/llvm-objdump+0xc23f3)
+ #8 0x00007c5e97e2a1ca __libc_start_call_main ./csu/../sysdeps/nptl/libc_start_call_main.h:74:3
+ #9 0x00007c5e97e2a28b call_init ./csu/../csu/libc-start.c:128:20
+#10 0x00007c5e97e2a28b __libc_start_main ./csu/../csu/libc-start.c:347:5
+#11 0x0000637e382765a5 (/usr/lib/llvm-18/bin/llvm-objdump+0x1e5a5)

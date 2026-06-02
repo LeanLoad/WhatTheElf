@@ -1,0 +1,1 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/verdef_bad_aux_offset': invalid SHT_GNU_verdef section with index 3: version definition 1 refers to an auxiliary entry that goes past the end of the section

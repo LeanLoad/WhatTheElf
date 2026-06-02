@@ -1,0 +1,4 @@
+readelf: Warning: Virtual address 0xd709a0 not located in any PT_LOAD segment.
+readelf: Error: Reading 8 bytes extends past end of file for dynamic string table
+readelf: Error: Corrupt DT_STRTAB dynamic entry
+readelf: Error: histogram chain is corrupt

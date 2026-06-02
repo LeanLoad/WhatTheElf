@@ -1,0 +1,1 @@
+readelf: Warning: possibly corrupt ELF file header - it has a non-zero section header offset, but no section headers

@@ -1,0 +1,2 @@
+readelf: Warning: Section 1 has an out of range sh_info value of 3
+readelf: Warning: [ 1]: Expected link to another section in info fieldreadelf: Warning: possibly corrupt ELF header - it has a non-zero program header offset, but no program headers

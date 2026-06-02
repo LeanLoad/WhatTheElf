@@ -1,0 +1,2 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/dynamic_syment_zero': DT_SYMENT value of 0x0 is not the size of a symbol (0x18)
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/dynamic_syment_zero': st_name (0x0) is past the end of the string table of size 0x0

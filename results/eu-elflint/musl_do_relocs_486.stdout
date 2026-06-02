@@ -1,0 +1,17 @@
+invalid section header table offset
+Can only check 1 headers, shnum was 255
+invalid section header size: 32576
+program header entry 0: alignment not a power of 2
+static executable cannot have dynamic sections
+program header entry 2: alignment not a power of 2
+program header entry 5: alignment not a power of 2
+program header entry 7: alignment not a power of 2
+program header entry 10: file offset and virtual address not module of alignment
+program header entry 14: alignment not a power of 2
+program header entry 16: file size greater than memory size
+program header entry 17: file size greater than memory size
+program header entry 21: unknown program header entry type 0xffde00
+program header entry 21: alignment not a power of 2
+program header entry 22: alignment not a power of 2
+program header entry 23: unknown program header entry type 0xffffffff
+program header entry 27: alignment not a power of 2

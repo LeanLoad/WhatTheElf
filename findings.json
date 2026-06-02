@@ -1,0 +1,492 @@
+[
+  {
+    "backend": "ld-glibc",
+    "case": "filesz_gt_memsz",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "glibc_dyn_lsoname_oob",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "glibc_load_memsz_past_eof",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGBUS(7)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "glibc_load_wild_vaddr_phdr",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGBUS(7)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "glibc_rtld_startup_strcmp",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "glibc_wild_vaddr_aslr",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "interp_empty_string",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "interp_filesz_zero",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "interp_no_nul",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "interp_offset_oob",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "load_align_non_power_two",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "load_offset_oob",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGBUS(7)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "load_vaddr_wraparound",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "objdump_so_sigsegv",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "phdr_misaligned",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-glibc",
+    "case": "symtab_shlink_oob",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-musl",
+    "case": "dynamic_relent_zero",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-musl",
+    "case": "glibc_dyn_lsoname_oob",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-musl",
+    "case": "musl___dls3_1414",
+    "category": "crash",
+    "finding": "crashed: Error loading shared library AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u000b: No such file or directory (needed by /users/szhong/LeanLoad/WhatTheElf/fixtures/musl___dls3_1414)",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-musl",
+    "case": "musl___dls3_852",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-musl",
+    "case": "musl_do_relocs_345",
+    "category": "crash",
+    "finding": "crashed: Error loading shared library ELF\u0002\u0001\u0001: No such file or directory (needed by /users/szhong/LeanLoad/WhatTheElf/fixtures/musl_do_relocs_345)",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-musl",
+    "case": "musl_do_relocs_473",
+    "category": "crash",
+    "finding": "crashed: Error loading shared library ELF\u0002\u0001\u0001: No such file or directory (needed by /users/szhong/LeanLoad/WhatTheElf/fixtures/musl_do_relocs_473)",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-musl",
+    "case": "musl_do_relocs_486",
+    "category": "crash",
+    "finding": "crashed: Error loading shared library ELF\u0002\u0001\u0001: No such file or directory (needed by /users/szhong/LeanLoad/WhatTheElf/fixtures/musl_do_relocs_486)",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-musl",
+    "case": "musl_do_relr_relocs_570",
+    "category": "crash",
+    "finding": "crashed: Error loading shared library AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u000b: No such file or directory (needed by /users/szhong/LeanLoad/WhatTheElf/fixtures/musl_do_relr_relocs_570)",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-musl",
+    "case": "musl_load_direct_deps_1067",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-musl",
+    "case": "musl_memcpy_66",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-musl",
+    "case": "musl_memset_847",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGBUS(7)"
+  },
+  {
+    "backend": "ld-musl",
+    "case": "musl_reloc_all_430",
+    "category": "crash",
+    "finding": "crashed: Error loading shared library ELF\u0002\u0001\u0001: No such file or directory (needed by /users/szhong/LeanLoad/WhatTheElf/fixtures/musl_reloc_all_430)",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "ld-musl",
+    "case": "musl_sysv_lookup_261",
+    "category": "crash",
+    "finding": "crashed: Error loading shared library ELF\u0002\u0001\u0001: No such file or directory (needed by /users/szhong/LeanLoad/WhatTheElf/fixtures/musl_sysv_lookup_261)",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "llvm-objdump",
+    "case": "glibc_dyn_lsoname_oob",
+    "category": "crash",
+    "finding": "crashed: PLEASE submit a bug report to https://github.com/llvm/llvm-project/issues/ and include the crash backtrace.",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "llvm-objdump",
+    "case": "musl___dls3_852",
+    "category": "crash",
+    "finding": "crashed: PLEASE submit a bug report to https://github.com/llvm/llvm-project/issues/ and include the crash backtrace.",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "llvm-objdump",
+    "case": "objdump_so_sigsegv",
+    "category": "crash",
+    "finding": "crashed: PLEASE submit a bug report to https://github.com/llvm/llvm-project/issues/ and include the crash backtrace.",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "bad_file_version",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "bad_shentsize_large",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "bad_shentsize_short",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "glibc_load_memsz_past_eof",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGBUS(7)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "glibc_rtld_startup_strcmp",
+    "category": "crash",
+    "finding": "crashed: qemu-x86_64: GLib: ../../../glib/gmem.c:106: failed to allocate 4467573029374787584 bytes",
+    "status": "signal=SIGTRAP(5)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "interp_filesz_zero",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "interp_section_missing",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "interp_section_no_nul",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "interp_shname_oob",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "interp_shoffset_oob",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "interp_shsize_zero",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "load_offset_oob",
+    "category": "crash",
+    "finding": "crashed: qemu-x86_64: QEMU internal SIGBUS {code=ADRERR, addr=0x400080}",
+    "status": "signal=SIGBUS(7)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "note_desc_oob",
+    "category": "crash",
+    "finding": "crashed: qemu-x86_64: linux-user/elfload.c:3019: pgb_dynamic: Assertion `QEMU_IS_ALIGNED(guest_loaddr, align)' failed.",
+    "status": "signal=SIGABRT(6)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "note_header_short_fields",
+    "category": "crash",
+    "finding": "crashed: qemu-x86_64: linux-user/elfload.c:3019: pgb_dynamic: Assertion `QEMU_IS_ALIGNED(guest_loaddr, align)' failed.",
+    "status": "signal=SIGABRT(6)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "note_name_oob",
+    "category": "crash",
+    "finding": "crashed: qemu-x86_64: linux-user/elfload.c:3019: pgb_dynamic: Assertion `QEMU_IS_ALIGNED(guest_loaddr, align)' failed.",
+    "status": "signal=SIGABRT(6)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "note_truncated_header",
+    "category": "crash",
+    "finding": "crashed: qemu-x86_64: linux-user/elfload.c:3019: pgb_dynamic: Assertion `QEMU_IS_ALIGNED(guest_loaddr, align)' failed.",
+    "status": "signal=SIGABRT(6)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "phdr_overlaps_ehdr",
+    "category": "crash",
+    "finding": "crashed: qemu-x86_64: linux-user/elfload.c:3019: pgb_dynamic: Assertion `QEMU_IS_ALIGNED(guest_loaddr, align)' failed.",
+    "status": "signal=SIGABRT(6)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "phnum_zero",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "pt_phdr_misaligned",
+    "category": "crash",
+    "finding": "crashed: qemu-x86_64: linux-user/elfload.c:3019: pgb_dynamic: Assertion `QEMU_IS_ALIGNED(guest_loaddr, align)' failed.",
+    "status": "signal=SIGABRT(6)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "rela_shlink_not_symtab",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "sh_info_oob_info_link",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "shdr_overlaps_ehdr",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "shdr_table_truncated",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "shnum_huge_oob",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "shoff_oob",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "shstrndx_not_strtab",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "shstrndx_oob",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "symtab_entsize_too_large",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "symtab_entsize_zero",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "symtab_shinfo_too_large",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "symtab_shlink_not_strtab",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "symtab_shlink_oob",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "symtab_size_not_multiple",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "verdef_bad_aux_offset",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "verdef_truncated_header",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "verneed_bad_aux_offset",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "verneed_truncated_header",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  },
+  {
+    "backend": "qemu-x86_64",
+    "case": "versym_size_odd",
+    "category": "crash",
+    "finding": "backend crashed",
+    "status": "signal=SIGSEGV(11)"
+  }
+]

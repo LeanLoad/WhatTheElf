@@ -1,0 +1,2 @@
+readelf: Warning: [ 1]: Link field (2) should index a symtab section.
+readelf: Warning: possibly corrupt ELF header - it has a non-zero program header offset, but no program headers

@@ -1,0 +1,4 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/musl_memset_847': unable to read program headers to locate the PT_DYNAMIC segment: invalid e_phentsize: 75
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/musl_memset_847': unable to dump program headers: invalid e_phentsize: 75
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/musl_memset_847': can't read program headers to build section to segment mapping: invalid e_phentsize: 75
+llvm-readelf: error: '/users/szhong/LeanLoad/WhatTheElf/fixtures/musl_memset_847': invalid e_phentsize: 75

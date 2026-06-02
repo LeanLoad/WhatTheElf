@@ -1,0 +1,1 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/dynamic_versym_oob': unable to print the GNU hash table histogram: the dynamic symbol table is empty

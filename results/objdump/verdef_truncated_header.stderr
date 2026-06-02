@@ -1,0 +1,2 @@
+objdump: /users/szhong/LeanLoad/WhatTheElf/fixtures/verdef_truncated_header: .gnu.version_d invalid entry
+objdump: warning: private headers incomplete: bad value

@@ -1,0 +1,3 @@
+qemu-x86_64: /users/szhong/LeanLoad/WhatTheElf/fixtures/load_vaddr_wraparound: Unable to find a guest_base to satisfy all guest address mapping requirements
+  0000000000000000-0000000000000fff
+  fffffffffffff000-0000000000000fff

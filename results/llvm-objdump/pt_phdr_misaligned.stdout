@@ -1,0 +1,8 @@
+
+/users/szhong/LeanLoad/WhatTheElf/fixtures/pt_phdr_misaligned:	file format elf64-x86-64
+
+Program Header:
+    PHDR off    0x0000000000000041 vaddr 0x0000000000400041 paddr 0x0000000000400041 align 2**3
+         filesz 0x0000000000000038 memsz 0x0000000000000038 flags r--
+
+Dynamic Section:

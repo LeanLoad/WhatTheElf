@@ -1,0 +1,1 @@
+patchelf: cannot find section '.interp'. The input file is most likely statically linked

@@ -1,0 +1,16 @@
+PLEASE submit a bug report to https://github.com/llvm/llvm-project/issues/ and include the crash backtrace.
+Stack dump:
+0.	Program arguments: llvm-objdump -p /users/szhong/LeanLoad/WhatTheElf/fixtures/glibc_dyn_lsoname_oob
+ #0 0x000075b1235a63bf llvm::sys::PrintStackTrace(llvm::raw_ostream&, int) (/usr/lib/llvm-18/bin/../lib/libLLVM.so.18.1+0xda63bf)
+ #1 0x000075b1235a44f9 llvm::sys::RunSignalHandlers() (/usr/lib/llvm-18/bin/../lib/libLLVM.so.18.1+0xda44f9)
+ #2 0x000075b1235a6b00 (/usr/lib/llvm-18/bin/../lib/libLLVM.so.18.1+0xda6b00)
+ #3 0x000075b122045330 (/lib/x86_64-linux-gnu/libc.so.6+0x45330)
+ #4 0x000075b124da34ae llvm::object::ELFFile<llvm::object::ELFType<(llvm::endianness)1, true>>::dynamicEntries() const (/usr/lib/llvm-18/bin/../lib/libLLVM.so.18.1+0x25a34ae)
+ #5 0x00005c1869c41e38 (/usr/lib/llvm-18/bin/llvm-objdump+0x64e38)
+ #6 0x00005c1869c0d7f7 (/usr/lib/llvm-18/bin/llvm-objdump+0x307f7)
+ #7 0x00005c1869c037fe (/usr/lib/llvm-18/bin/llvm-objdump+0x267fe)
+ #8 0x00005c1869c9f3f3 (/usr/lib/llvm-18/bin/llvm-objdump+0xc23f3)
+ #9 0x000075b12202a1ca __libc_start_call_main ./csu/../sysdeps/nptl/libc_start_call_main.h:74:3
+#10 0x000075b12202a28b call_init ./csu/../csu/libc-start.c:128:20
+#11 0x000075b12202a28b __libc_start_main ./csu/../csu/libc-start.c:347:5
+#12 0x00005c1869bfb5a5 (/usr/lib/llvm-18/bin/llvm-objdump+0x1e5a5)

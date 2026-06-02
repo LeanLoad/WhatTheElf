@@ -1,0 +1,48 @@
+
+/users/szhong/LeanLoad/WhatTheElf/fixtures/objdump_so_sigsegv:     file format elf64-x86-64
+
+Program Header:
+    LOAD off    0x0000000000000000 vaddr 0x0000000000000000 paddr 0x0000000000000000 align 2**12
+         filesz 0x0000000000000518 memsz 0x0000000000000518 flags r--
+    LOAD off    0x0000000000001000 vaddr 0x0000000000001000 paddr 0x0000000000001000 align 2**12
+         filesz 0x0000000000000159 memsz 0x0000000000000159 flags r-x
+    LOAD off    0x0000000000002000 vaddr 0x0000000000002000 paddr 0x0000000000002000 align 2**12
+         filesz 0x00000000000000ec memsz 0x00000000000000ec flags r--
+    LOAD off    0x0000000000002e30 vaddr 0x0000000000003e30 paddr 0x0000000000003e30 align 2**12
+         filesz 0x00000000000001e4 memsz 0x00000000000001e8 flags rw-
+ DYNAMIC off    0x0000000000002e40 vaddr 0x0000000000003e40 paddr 0x0000000000003e40 align 2**0
+         filesz 0xfffffffffffffe7f memsz 0xfffffffffffffe7f flags rw-
+0xfffffffb off    0xfffffffffffffd57 vaddr 0xfffffffffffffd57 paddr 0xfffffffffffffd57 align 2**3
+         filesz 0xffffffffffffffdf memsz 0x0000000000000020 flags -wx fffffff8
+    NOTE off    0x00000000000002c8 vaddr 0x00000000000002c8 paddr 0x00000000000002c8 align 2**2
+         filesz 0x0000000000000024 memsz 0x0000000000000024 flags r--
+0x6474e553 off    0x00000000000002a8 vaddr 0x00000000000002a8 paddr 0x00000000000002a8 align 2**3
+         filesz 0x0000000000000020 memsz 0x0000000000000020 flags r--
+EH_FRAME off    0x0000000000002000 vaddr 0x0000000000002000 paddr 0x0000000000002000 align 2**2
+         filesz 0x0000000000000034 memsz 0x0000000000000034 flags r--
+   STACK off    0x0000000000000000 vaddr 0x0000000000000000 paddr 0x0000000000000000 align 2**4
+         filesz 0x0000000000000000 memsz 0x0000000000000000 flags rw-
+   RELRO off    0x0000000000002e30 vaddr 0x0000000000003e30 paddr 0x0000000000003e30 align 2**0
+         filesz 0x00000000000001d0 memsz 0x00000000000001d0 flags r--
+
+Dynamic Section:
+  INIT                 0x0000000000001000
+  FINI                 0x000000000000114c
+  INIT_ARRAY           0x0000000000003e30
+  INIT_ARRAYSZ         0x0000000000000008
+  FINI_ARRAY           0x0000000000003e38
+  FINI_ARRAYSZ         0x0000000000000008
+  GNU_HASH             0x00000000000002f0
+  STRTAB               0x00000000000003e0
+  SYMTAB               0x0000000000000320
+  STRSZ                0x000000000000005e
+  SYMENT               0x0000000000000018
+  PLTGOT               0x0000000000003fe8
+  PLTRELSZ             0x0000000000000018
+  PLTREL               0x0000000000000007
+  JMPREL               0x0000000000000500
+  RELA                 0x0000000000000440
+  RELASZ               0x00000000000000c0
+  RELAENT              0x0000000000000018
+  RELACOUNT            0x0000000000000003
+

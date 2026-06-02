@@ -1,0 +1,1 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/interp_offset_oob': unable to read program interpreter name at offset 0x1000: it goes past the end of the file (0xb0)

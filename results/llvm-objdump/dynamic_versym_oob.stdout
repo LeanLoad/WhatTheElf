@@ -1,0 +1,16 @@
+
+/users/szhong/LeanLoad/WhatTheElf/fixtures/dynamic_versym_oob:	file format elf64-x86-64
+
+Program Header:
+    LOAD off    0x00000000000000b0 vaddr 0x00000000000000b0 paddr 0x00000000000000b0 align 2**12
+         filesz 0x0000000000001000 memsz 0x0000000000001000 flags rw-
+ DYNAMIC off    0x00000000000008b0 vaddr 0x00000000000008b0 paddr 0x0000000000000000 align 2**3
+         filesz 0x0000000000000070 memsz 0x0000000000000070 flags rw-
+
+Dynamic Section:
+  GNU_HASH              0x0000000000000900
+  SYMTAB                0x0000000000000940
+  SYMENT                0x0000000000000018
+  STRTAB                0x00000000000009a0
+  STRSZ                 0x0000000000000008
+  <unknown:>0x100000001 0x0000000000000001

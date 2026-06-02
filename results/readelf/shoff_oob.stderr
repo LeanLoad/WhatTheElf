@@ -1,0 +1,3 @@
+readelf: Error: Reading 64 bytes extends past end of file for section headers
+readelf: Error: Section headers are not available!
+readelf: Warning: possibly corrupt ELF header - it has a non-zero program header offset, but no program headers

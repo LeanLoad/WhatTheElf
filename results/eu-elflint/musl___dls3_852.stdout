@@ -1,0 +1,2 @@
+static executable cannot have dynamic sections
+program header entry 1: alignment not a power of 2

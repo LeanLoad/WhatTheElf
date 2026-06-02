@@ -1,0 +1,7 @@
+
+/users/szhong/LeanLoad/WhatTheElf/fixtures/phdr_overlaps_ehdr:     file format elf64-x86-64
+
+Program Header:
+    0x20 off    0x0000000000000000 vaddr 0x0038004000000000 paddr 0x0000000000400001 align 2**0
+         filesz 0x0000000000000000 memsz 0x0000000000000000 flags ---
+

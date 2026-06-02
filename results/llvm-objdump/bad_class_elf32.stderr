@@ -1,0 +1,1 @@
+llvm-objdump: error: '/users/szhong/LeanLoad/WhatTheElf/fixtures/bad_class_elf32': invalid e_shentsize in ELF header: 0

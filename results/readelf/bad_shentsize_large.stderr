@@ -1,0 +1,2 @@
+readelf: Warning: The e_shentsize field in the ELF header is larger than the size of an ELF section header
+readelf: Warning: possibly corrupt ELF header - it has a non-zero program header offset, but no program headers

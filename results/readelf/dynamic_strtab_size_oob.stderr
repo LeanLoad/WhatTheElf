@@ -1,0 +1,3 @@
+readelf: Warning: Virtual address 0x900 not located in any PT_LOAD segment.
+readelf: Error: Reading 8192 bytes extends past end of file for dynamic string table
+readelf: Error: Corrupt DT_STRTAB dynamic entry

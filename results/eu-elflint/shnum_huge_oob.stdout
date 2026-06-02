@@ -1,0 +1,3 @@
+invalid number of program header entries
+Can only check 1 headers, shnum was 65535
+cannot get section header of zeroth section

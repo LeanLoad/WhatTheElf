@@ -1,0 +1,5 @@
+Error loading shared library ELF: No such file or directory (needed by /users/szhong/LeanLoad/WhatTheElf/fixtures/musl_sysv_lookup_261)
+Error relocating /users/szhong/LeanLoad/WhatTheElf/fixtures/musl_sysv_lookup_261: unsupported relocation type 64
+Error relocating /users/szhong/LeanLoad/WhatTheElf/fixtures/musl_sysv_lookup_261: unsupported relocation type 4194332
+Error relocating /users/szhong/LeanLoad/WhatTheElf/fixtures/musl_sysv_lookup_261: unsupported relocation type 12288
+Error relocating /users/szhong/LeanLoad/WhatTheElf/fixtures/musl_sysv_lookup_261: unsupported relocation type 2224

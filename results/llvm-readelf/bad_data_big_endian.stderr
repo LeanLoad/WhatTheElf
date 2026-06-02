@@ -1,0 +1,3 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/bad_data_big_endian': unable to read program headers to locate the PT_DYNAMIC segment: program headers are longer than binary of size 64: e_phoff = 0x4000000000000000, e_phnum = 0, e_phentsize = 14336
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/bad_data_big_endian': can't read program headers to build section to segment mapping: program headers are longer than binary of size 64: e_phoff = 0x4000000000000000, e_phnum = 0, e_phentsize = 14336
+llvm-readelf: error: '/users/szhong/LeanLoad/WhatTheElf/fixtures/bad_data_big_endian': program headers are longer than binary of size 64: e_phoff = 0x4000000000000000, e_phnum = 0, e_phentsize = 14336

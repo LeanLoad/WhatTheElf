@@ -1,0 +1,4 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/bad_phentsize_short': unable to read program headers to locate the PT_DYNAMIC segment: invalid e_phentsize: 55
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/bad_phentsize_short': unable to dump program headers: invalid e_phentsize: 55
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/bad_phentsize_short': can't read program headers to build section to segment mapping: invalid e_phentsize: 55
+llvm-readelf: error: '/users/szhong/LeanLoad/WhatTheElf/fixtures/bad_phentsize_short': invalid e_phentsize: 55

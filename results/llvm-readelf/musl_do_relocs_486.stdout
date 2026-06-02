@@ -1,0 +1,91 @@
+ELF Header:
+  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
+  Class:                             ELF64
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           Advanced Micro Devices X86-64
+  Version:                           0x1
+  Entry point address:               0x400080
+  Start of program headers:          64 (bytes into file)
+  Start of section headers:          0 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               64 (bytes)
+  Size of program headers:           56 (bytes)
+  Number of program headers:         28
+  Size of section headers:           32576 (bytes)
+  Number of section headers:         255
+  Section header string table index: 0
+
+There are no sections in this file.
+
+Elf file type is EXEC (Executable file)
+Entry point 0x400080
+There are 28 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset   VirtAddr           PhysAddr           FileSiz  MemSiz   Flg Align
+  LOAD           0x000000 0x0000000000000000 0x0000000000000000 0x001000 0x003000 RW  0xbd1000
+  DYNAMIC        0x0008b0 0x0000000000000a04 0x0000000000000060 0x000008 0x27000000000000 RW  0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0xffff050000000000     0x5
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x5ffff05000000
+  NULL           0x000000 0x00000000000000f4 0x0000000000000000 0x000000 0x000000     0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0xff
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x0
+  NULL           0xf90000000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x0
+  NULL           0xfffffff400 0x1000000000000000 0xb000000000000000 0xb000000000000000 0xff00000000000000     0x40000000000000
+  NULL           0x000000 0xedff000000000000 0x0000000000000000 0x000000 0x000000     0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000002 0x000000 0x000000     0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x180000000000
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x002000 0x000000     0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000010 0x000000     0x0
+  NULL           0x000000 0x0000000000000000 0x0000000006000000 0x000000 0x000000     0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x0
+  <unknown>: 0xffde00 0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x3e000200000000
+  LOAD           0x4000000000 0x0000002000000000 0x0000000000000000 0x000000 0xffffffffffffffff     0xffffffffffffffff
+  <unknown>: 0xffffffff 0xffffffffffffffff 0xffffffffffffffff 0xffffffffffffffff 0xffffffffffffffff 0xffffffffffffffff RWE 0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x0
+  NULL           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0x0
+  LOAD           0x000000 0x0000000000000000 0x0000000000000000 0x000000 0x000000     0xfd0000
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     
+   01     
+   02     
+   03     
+   04     
+   05     
+   06     
+   07     
+   08     
+   09     
+   10     
+   11     
+   12     
+   13     
+   14     
+   15     
+   16     
+   17     
+   18     
+   19     
+   20     
+   21     
+   22     
+   23     
+   24     
+   25     
+   26     
+   27     
+
+There are no relocations in this file.
+There are no section groups in this file.

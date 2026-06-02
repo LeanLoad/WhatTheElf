@@ -1,0 +1,2 @@
+llvm-objdump: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/phdr_table_truncated': unable to read program headers: program headers are longer than binary of size 120: e_phoff = 0x40, e_phnum = 2, e_phentsize = 56
+llvm-objdump: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/phdr_table_truncated': program headers are longer than binary of size 120: e_phoff = 0x40, e_phnum = 2, e_phentsize = 56

@@ -1,0 +1,1 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/verneed_bad_aux_offset': invalid SHT_GNU_verneed section with index 3: version dependency 1 goes past the end of the section

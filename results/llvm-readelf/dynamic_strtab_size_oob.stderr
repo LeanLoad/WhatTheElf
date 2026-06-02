@@ -1,0 +1,1 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/dynamic_strtab_size_oob': the dynamic string table at 0x900 goes past the end of the file (0x10b0) with DT_STRSZ = 0x2000

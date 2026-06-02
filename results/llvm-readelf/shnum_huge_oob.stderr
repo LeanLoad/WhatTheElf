@@ -1,0 +1,1 @@
+llvm-readelf: error: '/users/szhong/LeanLoad/WhatTheElf/fixtures/shnum_huge_oob': unable to continue dumping, the file is corrupt: section table goes past the end of file

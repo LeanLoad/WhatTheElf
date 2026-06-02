@@ -1,0 +1,4 @@
+unknown object file type 65535
+invalid number of program header entries
+section header table must be present
+only executables, shared objects, and core files can have program headers

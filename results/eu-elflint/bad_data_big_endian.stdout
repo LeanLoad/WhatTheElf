@@ -1,0 +1,9 @@
+unknown object file type 512
+unknown machine type 15872
+unknown object file version
+invalid number of program header entries
+section header table must be present
+invalid ELF header size: 16384
+invalid program header size: 14336
+invalid section header size: 16384
+only executables, shared objects, and core files can have program headers

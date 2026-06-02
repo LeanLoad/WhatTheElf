@@ -1,0 +1,8 @@
+
+/users/szhong/LeanLoad/WhatTheElf/fixtures/glibc_load_memsz_past_eof:	file format elf64-x86-64
+
+Program Header:
+    LOAD off    0x0000000000000000 vaddr 0x0000000000010000 paddr 0x0000000000010000 align 2**12
+         filesz 0x0000000000001800 memsz 0x0000000000002000 flags rw-
+
+Dynamic Section:

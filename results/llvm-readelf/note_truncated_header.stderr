@@ -1,0 +1,1 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/note_truncated_header': unable to read notes from the PT_NOTE segment with index 0: ELF note overflows container

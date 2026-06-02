@@ -1,0 +1,5 @@
+invalid number of program header entries
+section [ 1]: invalid name
+cannot get section header
+section [ 1] '<invalid>': ELF header says this is the section header string table but type is not SHT_TYPE
+section [ 0] '<invalid>': referenced as string table for section [ 1] '<invalid>' but type is not SHT_STRTAB

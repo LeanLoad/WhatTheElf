@@ -1,0 +1,1 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/versym_size_odd': cannot read content of SHT_GNU_versym section with index 3: section [index 3] has invalid sh_entsize: expected 2, but got 0

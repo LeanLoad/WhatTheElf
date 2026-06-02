@@ -1,0 +1,2 @@
+readelf: Error: the segment's file size is larger than its memory size
+readelf: Error: Unable to find program interpreter name

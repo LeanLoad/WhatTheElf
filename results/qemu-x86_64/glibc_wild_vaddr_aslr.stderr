@@ -1,0 +1,3 @@
+qemu-x86_64: /users/szhong/LeanLoad/WhatTheElf/fixtures/glibc_wild_vaddr_aslr: Unable to find a guest_base to satisfy all guest address mapping requirements
+  0000000000000000-0000000000000fff
+  00000000b0000000-ffffb00000805fff

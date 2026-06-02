@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/users/szhong/LeanLoad/third_party/impl-tool/pyelftools/scripts/readelf.py", line 2014, in <module>
+    main()
+  File "/users/szhong/LeanLoad/third_party/impl-tool/pyelftools/scripts/readelf.py", line 1962, in main
+    readelf.display_program_headers(
+  File "/users/szhong/LeanLoad/third_party/impl-tool/pyelftools/scripts/readelf.py", line 357, in display_program_headers
+    segment.get_interp_name())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/szhong/LeanLoad/third_party/impl-tool/pyelftools/elftools/elf/segments.py", line 125, in get_interp_name
+    return struct_parse(
+           ^^^^^^^^^^^^^
+  File "/users/szhong/LeanLoad/third_party/impl-tool/pyelftools/elftools/common/utils.py", line 56, in struct_parse
+    stream.seek(stream_pos)
+OSError: [Errno 22] Invalid argument

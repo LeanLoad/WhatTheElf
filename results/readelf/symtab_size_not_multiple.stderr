@@ -1,0 +1,2 @@
+readelf: Warning: possibly corrupt ELF header - it has a non-zero program header offset, but no program headers
+readelf: Warning: local symbol 0 found at index >= <no-strings>'s sh_info value of 0

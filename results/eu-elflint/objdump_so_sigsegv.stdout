@@ -1,0 +1,7 @@
+dynamic section size mismatch in program and section header
+program header entry 4: alignment not a power of 2
+program header entry 5: unknown program header entry type 0xfffffffb
+program header entry 5: file size greater than memory size
+section [24] '.symtab': _DYNAMIC symbol size 0 does not match dynamic segment size 18446744073709551231
+section [24] '.symtab': symbol 14 (__TMC_END__): st_value out of bounds
+section [24] '.symtab': _GLOBAL_OFFSET_TABLE_ symbol size 0 does not match .got.plt section size 32

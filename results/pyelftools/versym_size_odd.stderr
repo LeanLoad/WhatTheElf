@@ -1,0 +1,1 @@
+ELF error: Section points at section 2 of type SHT_STRTAB, expected SHT_SYMTAB/SHT_DYNSYM

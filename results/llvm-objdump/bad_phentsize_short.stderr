@@ -1,0 +1,2 @@
+llvm-objdump: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/bad_phentsize_short': unable to read program headers: invalid e_phentsize: 55
+llvm-objdump: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/bad_phentsize_short': invalid e_phentsize: 55

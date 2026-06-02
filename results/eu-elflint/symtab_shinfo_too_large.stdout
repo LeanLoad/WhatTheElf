@@ -1,0 +1,6 @@
+invalid number of program header entries
+section [ 1]: invalid name
+cannot get section header
+section [ 1] '<invalid>': number of local entries in 'st_info' larger than table size
+section [ 2]: invalid name
+cannot get section header

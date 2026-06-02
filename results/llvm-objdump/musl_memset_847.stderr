@@ -1,0 +1,2 @@
+llvm-objdump: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/musl_memset_847': unable to read program headers: invalid e_phentsize: 75
+llvm-objdump: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/musl_memset_847': invalid e_phentsize: 75

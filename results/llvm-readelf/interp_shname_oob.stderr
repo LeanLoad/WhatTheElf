@@ -1,0 +1,1 @@
+llvm-readelf: error: '/users/szhong/LeanLoad/WhatTheElf/fixtures/interp_shname_oob': a section [index 2] has an invalid sh_name (0xffff) offset which goes past the end of the section name string table

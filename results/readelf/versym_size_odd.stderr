@@ -1,0 +1,3 @@
+readelf: Warning: [ 3]: Link field (2) should index a symtab section.
+readelf: Warning: possibly corrupt ELF header - it has a non-zero program header offset, but no program headers
+readelf: Error: Section .dynstr has an invalid sh_entsize of 0

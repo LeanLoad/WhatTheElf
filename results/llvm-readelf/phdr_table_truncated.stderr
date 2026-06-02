@@ -1,0 +1,4 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/phdr_table_truncated': unable to read program headers to locate the PT_DYNAMIC segment: program headers are longer than binary of size 120: e_phoff = 0x40, e_phnum = 2, e_phentsize = 56
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/phdr_table_truncated': unable to dump program headers: program headers are longer than binary of size 120: e_phoff = 0x40, e_phnum = 2, e_phentsize = 56
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/phdr_table_truncated': can't read program headers to build section to segment mapping: program headers are longer than binary of size 120: e_phoff = 0x40, e_phnum = 2, e_phentsize = 56
+llvm-readelf: error: '/users/szhong/LeanLoad/WhatTheElf/fixtures/phdr_table_truncated': program headers are longer than binary of size 120: e_phoff = 0x40, e_phnum = 2, e_phentsize = 56

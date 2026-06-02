@@ -1,0 +1,3 @@
+executables and DSOs cannot have zero program header offset
+invalid section header index
+cannot get section header of zeroth section

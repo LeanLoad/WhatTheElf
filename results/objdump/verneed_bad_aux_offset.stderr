@@ -1,0 +1,2 @@
+objdump: /users/szhong/LeanLoad/WhatTheElf/fixtures/verneed_bad_aux_offset: .gnu.version_r invalid entry
+objdump: warning: private headers incomplete: bad value

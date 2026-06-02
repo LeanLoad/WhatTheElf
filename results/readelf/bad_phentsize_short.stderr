@@ -1,0 +1,2 @@
+readelf: Error: The e_phentsize field in the ELF header is less than the size of an ELF program header
+readelf: Error: The e_phentsize field in the ELF header is less than the size of an ELF program header

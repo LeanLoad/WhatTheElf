@@ -1,0 +1,3 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/musl_load_direct_deps_1067': unable to parse DT_STRTAB: virtual address is not in any segment: 0xd709a0
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/musl_load_direct_deps_1067': st_name (0x0) is past the end of the string table of size 0x0
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/musl_load_direct_deps_1067': .hash section is invalid: bucket 1: a cycle was detected in the linked chain

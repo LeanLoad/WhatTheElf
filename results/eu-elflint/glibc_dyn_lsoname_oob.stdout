@@ -1,0 +1,6 @@
+invalid section header table offset
+Can only check 1 headers, shnum was 16
+invalid section header size: 79
+static executable cannot have dynamic sections
+program header entry 1: file size greater than memory size
+program header entry 1: alignment not a power of 2

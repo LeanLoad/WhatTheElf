@@ -1,0 +1,1 @@
+ELF error: SHT_SYMTAB section points at section 0 of type SHT_NULL, expected SHT_STRTAB

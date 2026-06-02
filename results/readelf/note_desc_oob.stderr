@@ -1,0 +1,2 @@
+readelf: Warning: note with invalid namesz and/or descsz found at offset 0
+readelf: Warning:  type: 0x1, namesize: 0x4, descsize: 0x100, alignment: 4

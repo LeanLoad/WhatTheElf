@@ -1,0 +1,3 @@
+invalid number of program header entries
+section [ 2] '.dynstr' has wrong flags: expected ALLOC, is none
+section [ 3] '.version': cannot get section data

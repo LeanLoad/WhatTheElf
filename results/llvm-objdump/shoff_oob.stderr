@@ -1,0 +1,1 @@
+llvm-objdump: error: '/users/szhong/LeanLoad/WhatTheElf/fixtures/shoff_oob': section header table goes past the end of the file: e_shoff = 0x10000

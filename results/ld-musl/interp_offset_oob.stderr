@@ -1,0 +1,1 @@
+/lib/ld-musl-x86_64.so.1: /users/szhong/LeanLoad/WhatTheElf/fixtures/interp_offset_oob: Not a valid dynamic program

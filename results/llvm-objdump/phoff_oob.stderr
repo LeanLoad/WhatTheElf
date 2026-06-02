@@ -1,0 +1,2 @@
+llvm-objdump: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/phoff_oob': unable to read program headers: program headers are longer than binary of size 64: e_phoff = 0x10000, e_phnum = 1, e_phentsize = 56
+llvm-objdump: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/phoff_oob': program headers are longer than binary of size 64: e_phoff = 0x10000, e_phnum = 1, e_phentsize = 56

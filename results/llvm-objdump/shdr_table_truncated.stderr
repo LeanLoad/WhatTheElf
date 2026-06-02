@@ -1,0 +1,1 @@
+llvm-objdump: error: '/users/szhong/LeanLoad/WhatTheElf/fixtures/shdr_table_truncated': section table goes past the end of file

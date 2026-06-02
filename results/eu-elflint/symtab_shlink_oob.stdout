@@ -1,0 +1,4 @@
+section [ 1]: invalid name
+cannot get section header
+section [ 1] '<invalid>': invalid section reference in link value
+loadable segment [0] is executable but contains no executable sections

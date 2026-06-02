@@ -1,0 +1,10 @@
+
+/users/szhong/LeanLoad/WhatTheElf/fixtures/glibc_wild_vaddr_aslr:	file format elf64-x86-64
+
+Program Header:
+    LOAD off    0x0000000000000000 vaddr 0x00000000b0000000 paddr 0x0100000000000000 align 2**41
+         filesz 0x00007f0006010000 memsz 0x00000000b0000000 flags rw-
+    LOAD off    0x00007f3e00020000 vaddr 0xffffb00000800000 paddr 0x0000000000000000 align 2**13
+         filesz 0x0000640000100000 memsz 0x0000000000006000 flags ---
+
+Dynamic Section:

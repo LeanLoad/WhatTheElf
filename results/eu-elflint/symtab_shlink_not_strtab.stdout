@@ -1,0 +1,7 @@
+invalid number of program header entries
+section [ 1]: invalid name
+cannot get section header
+section [ 2] '<invalid>': referenced as string table for section [ 1] '<invalid>' but type is not SHT_STRTAB
+section [ 2]: invalid name
+cannot get section header
+section [ 0] '<invalid>': referenced as string table for section [ 2] '<invalid>' but type is not SHT_STRTAB

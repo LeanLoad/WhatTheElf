@@ -1,0 +1,1 @@
+llvm-objdump: error: '/users/szhong/LeanLoad/WhatTheElf/fixtures/shnum_huge_oob': section table goes past the end of file

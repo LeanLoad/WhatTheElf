@@ -1,0 +1,2 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/musl_do_relr_relocs_570': invalid PT_DYNAMIC size (0x8)
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/musl_do_relr_relocs_570': no valid dynamic table was found

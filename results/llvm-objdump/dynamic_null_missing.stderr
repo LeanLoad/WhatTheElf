@@ -1,0 +1,1 @@
+llvm-objdump: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/dynamic_null_missing': dynamic sections must be DT_NULL terminated

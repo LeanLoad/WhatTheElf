@@ -1,0 +1,1 @@
+llvm-readelf: warning: '/users/szhong/LeanLoad/WhatTheElf/fixtures/verdef_truncated_header': invalid SHT_GNU_verdef section with index 3: version definition 1 goes past the end of the section
