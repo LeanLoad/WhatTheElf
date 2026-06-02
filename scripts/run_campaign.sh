@@ -102,8 +102,9 @@ else
 fi
 
 # qemu-user: binary-only (FRIDA) fuzzing of qemu-x86_64. NOTE: qemu executes the
-# guest, so most crashes are guest faults ("uncaught target signal"); the real
-# findings are qemu's own loader crashing pre-guest — triage with that marker.
+# guest, so SOME crashes are guest faults ("uncaught target signal" — the guest
+# running garbage code, not a qemu bug); the real findings are qemu's own loader
+# crashing pre-guest. Triage with that marker (the check classifier does this).
 QEMU_BIN=${QEMU_BIN:-$(command -v qemu-x86_64 || true)}
 QEMU_FUZZ_JOBS=${QEMU_FUZZ_JOBS:-1}
 QEMU_SEEDS=${QEMU_SEEDS:-$ROOT/fuzz-out/qemu-seeds}

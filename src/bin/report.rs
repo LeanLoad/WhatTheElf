@@ -241,14 +241,15 @@ fn summary(glibc: usize, musl: usize, results: &Results) -> String {
          only in the backend matrix below.</p>"
     ));
     h.push_str(
-        "<p>The headline: cheap header validation turns these away — glibc's \
-         <code>--verify</code> rejects them all cleanly — but <b>actually mapping and \
-         relocating a hostile object, which is what any real load does, crashes both \
-         loaders</b>. The crashes span the whole pipeline — segment mapping and \
-         <code>.bss</code> zero-fill, symbol resolution, REL/RELA/RELR relocation, dependency \
-         loading, and TLS setup. One input, <code>glibc_dyn_lsoname_oob</code> — a \
-         <code>PT_DYNAMIC</code> whose entry walk runs off into unmapped memory — crashes \
-         <b>glibc, musl, and llvm-objdump</b> alike.</p>",
+        "<p>The headline: <b>there is no cheap validation gate that turns these away — the \
+         loaders crash in the real work of loading them</b>. Even glibc's <code>--verify</code>, \
+         which sounds like a safe \"just check it\" mode, already mmaps the segments and walks \
+         the program headers, so it faults too (all the curated glibc inputs crash it). The \
+         faults span the whole pipeline — segment mapping and <code>.bss</code> zero-fill, \
+         symbol resolution, REL/RELA/RELR relocation, dependency loading, and TLS setup; the \
+         deeper the load goes, the more inputs crash. One input, \
+         <code>glibc_dyn_lsoname_oob</code> — a <code>PT_DYNAMIC</code> whose entry walk runs \
+         off into unmapped memory — crashes <b>glibc, musl, and llvm-objdump</b> alike.</p>",
     );
     if !results.is_empty() {
         h.push_str(&format!(

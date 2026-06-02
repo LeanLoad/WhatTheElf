@@ -117,10 +117,14 @@ static binary (plus a few malformed ones), kept separate from the loader corpus.
 `run_campaign.sh` adds these jobs when `frida_mode` is built (`setup_fuzz.sh`
 builds it).
 
-qemu-user *executes* the guest, so most of its crashes are guest faults
-(`qemu: uncaught target signal`) rather than qemu bugs; the real findings are
-qemu's own loader crashing before the guest runs (e.g. the `pgb_dynamic`
-assertion, a GLib over-allocation abort) — triage on that stderr marker.
+qemu-user *executes* the guest, so **some** of its crashes are guest faults
+(`qemu: uncaught target signal`) — the guest running garbage at a bogus entry
+point, not a qemu bug. (On the fixture corpus that's a minority — 5 of 90; e.g.
+an all-zero entry decodes as `add [rax],al` and SIGSEGVs the guest.) The real
+findings are qemu's *own* loader crashing before the guest runs (38: host
+SIGSEGV/SIGBUS mapping wild addresses, a `pgb_dynamic` assertion, a GLib
+over-allocation abort). Triage on the `uncaught target signal` stderr marker —
+that's exactly what the `check` classifier does.
 
 ## Current fixtures
 
