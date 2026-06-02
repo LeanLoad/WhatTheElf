@@ -1,10 +1,23 @@
 #!/usr/bin/env bash
 # Launch a multi-core AFL++ campaign against the instrumented glibc loader.
 #
-# Two complementary harnesses share one corpus via AFL's -M/-S sync:
-#   * `ld.so --verify @@`              - ELF header / phdr parsing & validation
-#   * `LD_TRACE_PRELINKING=1 ld.so @@` - full map + symbol resolution +
-#                                        relocation (without executing the entry)
+# Harnesses share one corpus via AFL's -M/-S sync. They must not run the loaded
+# program's entry or constructors, or we would be fuzzing the (garbage) program
+# rather than the loader.
+#   * glibc `ld.so --verify @@`                  - ELF header / phdr parse + map
+#   * glibc `ld.so --preload exitfirst.so @@`    - full map + dependency / symbol
+#                                                  resolution + relocation; the
+#                                                  preloaded exitfirst.so's
+#                                                  constructor _exit()s before the
+#                                                  target's constructors / main run
+#   * musl  `ld-musl --list @@`                  - map + relocation (rejects IFUNC;
+#                                                  does not run the program)
+# Two things NOT used: `LD_TRACE_PRELINKING=1` (it actually executes the target —
+# IFUNC resolvers, constructors, and main all run) and the env vars
+# `LD_TRACE_LOADED_OBJECTS=1` / `LD_PRELOAD=...` (set in the environment they also
+# affect afl-fuzz itself). `--preload` is a loader *argument*, so it scopes to the
+# target only. IFUNC resolvers still run during relocation; that is inherent to
+# exercising relocation and is acceptable for fuzzing.
 #
 # The loader carries our freestanding runtime (aflrt.c), so AFL talks to a real
 # forkserver and reads coverage from shared memory; AFL_SKIP_BIN_CHECK is
@@ -20,7 +33,7 @@ OUT=${OUT:-$ROOT/fuzz-out/ld}
 MUSL_OUT=${MUSL_OUT:-$ROOT/fuzz-out/musl}
 SEEDS=${SEEDS:-$ROOT/fixtures}
 VERIFY_JOBS=${VERIFY_JOBS:-2}
-PRELINK_JOBS=${PRELINK_JOBS:-2}
+RELOC_JOBS=${RELOC_JOBS:-2}
 MUSL_JOBS=${MUSL_JOBS:-2}
 
 export AFL_PATH=$ROOT/tools/aflplusplus
@@ -28,6 +41,14 @@ export AFL_SKIP_CPUFREQ=1 AFL_NO_AFFINITY=1 AFL_NO_UI=1 AFL_SKIP_BIN_CHECK=1 AFL
 
 [ -x "$LD" ] || { echo "missing loader: $LD (run setup_fuzz.sh)" >&2; exit 1; }
 [ -x "$AFL" ] || { echo "missing afl-fuzz: $AFL (run setup_fuzz.sh)" >&2; exit 1; }
+
+# Build the preload exit-lib if needed (constructor _exit()s before the target's
+# own constructors/main run; passed as `ld.so --preload` so it never touches the
+# fuzzer's own environment). Lets the reloc harness relocate the input fully
+# without executing it.
+EXITLIB=$ROOT/tools/exitfirst.so
+[ -f "$EXITLIB" ] || gcc -shared -fPIC -nostdlib -o "$EXITLIB" "$ROOT/scripts/exitfirst.c"
+
 ./gen.sh >/dev/null
 mkdir -p "$OUT" logs
 
@@ -41,10 +62,10 @@ for i in $(seq 1 "$VERIFY_JOBS"); do
   echo "  verify$i (pid $!) [$flag]"
   n=$((n+1))
 done
-for i in $(seq 1 "$PRELINK_JOBS"); do
-  setsid nohup env LD_TRACE_PRELINKING=1 "$AFL" -i "$SEEDS" -o "$OUT" -S prelink$i -m none -t 1000+ \
-    -- "$LD" @@ >"logs/afl_prelink$i.log" 2>&1 &
-  echo "  prelink$i (pid $!) [-S prelink$i]"
+for i in $(seq 1 "$RELOC_JOBS"); do
+  setsid nohup "$AFL" -i "$SEEDS" -o "$OUT" -S reloc$i -m none -t 1000+ \
+    -- "$LD" --preload "$EXITLIB" @@ >"logs/afl_reloc$i.log" 2>&1 &
+  echo "  reloc$i (pid $!) [-S reloc$i]"
   n=$((n+1))
 done
 

@@ -88,10 +88,24 @@ set `AFL_SKIP_BIN_CHECK=1`; coverage still flows through shared memory.
 
 ### Harnesses
 
-* glibc `ld.so --verify @@` — ELF header / program-header parsing & validation.
-* glibc `LD_TRACE_PRELINKING=1 ld.so @@` — full map + symbol resolution +
-  relocation, without executing the entry point (roughly doubles edge coverage).
-* musl `ld-musl-x86_64.so.1 --list @@` — map + resolve + relocate, no execute.
+The harnesses must not run the loaded program's entry or constructors, or we
+would be fuzzing the garbage program rather than the loader.
+
+* glibc `ld.so --verify @@` — ELF header / program-header parsing + mapping.
+* glibc `ld.so --preload scripts/exitfirst.so @@` — full map + dependency /
+  symbol resolution + relocation. The preloaded `exitfirst.so` (a freestanding
+  lib whose constructor `_exit()`s) stops execution after relocation but before
+  the target's own constructors / `main`.
+* musl `ld-musl-x86_64.so.1 --list @@` — map + relocation; rejects IFUNC and
+  does not run the program.
+
+Two things are deliberately **avoided**: `LD_TRACE_PRELINKING=1` (despite the
+name it executes the target — IFUNC resolvers, constructors, and `main` all
+run), and the `LD_TRACE_LOADED_OBJECTS=1` / `LD_PRELOAD=` *environment* variables
+(set in the environment they also hit `afl-fuzz` itself, which then just
+`ldd`-lists and exits). `--preload` is a loader argument, so it scopes to the
+target only. IFUNC resolvers still run during relocation — inherent to
+exercising it, and acceptable for fuzzing.
 
 ## Current fixtures
 
