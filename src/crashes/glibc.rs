@@ -9,13 +9,13 @@
 //! `--verify` is not just a header check: `_dl_map_object_from_fd` (dl-load.c)
 //! mmaps the program-header segments and re-walks them, so most faults are in
 //! the mapping / dynamic-section handling rather than header validation.
-use crate::crash::{Crash, Loader::Glibc, Repro::*, Signal::*};
+use crate::crash::{Crash, Target::Glibc, Repro::*, Signal::*};
 use crate::elf::{Ehdr, ImageSpec, Phdr, PF_R, PF_W, PF_X, PT_LOAD};
 
 /// Structured reproducer. Reduced from `crashes/glibc_00_sig7.elf`.
 pub const LOAD_MEMSZ_PAST_EOF: Crash = Crash {
     id: "glibc_load_memsz_past_eof",
-    loader: Glibc,
+    target: Glibc,
     signal: Bus,
     site: "_dl_map_segments memset (dl-map-segments.h:177)",
     repro: Structured,
@@ -44,7 +44,7 @@ reproducer keeps the essential condition (filesz/memsz past EOF, memsz>filesz) m
 /// Structured reproducer. Reduced from `crashes/glibc_01_sig11.elf`.
 pub const LOAD_WILD_VADDR_PHDR: Crash = Crash {
     id: "glibc_load_wild_vaddr_phdr",
-    loader: Glibc,
+    target: Glibc,
     signal: Bus,
     site: "_dl_map_object_from_fd phdr rescan (dl-load.c:1342)",
     repro: Structured,
@@ -86,7 +86,7 @@ crashes/glibc_01_sig11.elf (the corpus also held byte-variants glibc_02/03/05)."
 /// garbage, so there is no clean structural form. `crashes/glibc_07_sig11.elf`.
 pub const DYN_LSONAME_OOB: Crash = Crash {
     id: "glibc_dyn_lsoname_oob",
-    loader: Glibc,
+    target: Glibc,
     signal: Segv,
     site: "l_soname (ldsodefs.h:99, from dl-load.c:1429)",
     repro: RawArtifact,
@@ -106,7 +106,7 @@ l_soname dereferences a wild l_info[] pointer and faults.",
 /// `crashes/glibc_04_sig11.elf`.
 pub const RTLD_STARTUP_STRCMP: Crash = Crash {
     id: "glibc_rtld_startup_strcmp",
-    loader: Glibc,
+    target: Glibc,
     signal: Segv,
     site: "strcmp from dl_main start-up (rtld.c:1687)",
     repro: RawArtifact,
@@ -126,7 +126,7 @@ from that code rather than a clean reproducer. glibc_06 is a second byte-variant
 /// it. `crashes/glibc_03_sig11.elf`.
 pub const WILD_VADDR_ASLR: Crash = Crash {
     id: "glibc_wild_vaddr_aslr",
-    loader: Glibc,
+    target: Glibc,
     signal: Segv,
     site: "_dl_map_object_from_fd phdr rescan (dl-load.c:1342)",
     repro: RawArtifact,

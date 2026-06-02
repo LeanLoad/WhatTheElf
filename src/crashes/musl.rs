@@ -5,13 +5,13 @@
 //! (ldso/dynlink.c); fuzzing `--list` reached deep into relocation, symbol
 //! resolution, dependency loading and TLS setup, so these span the pipeline.
 //! Kept raw - the malformations are dynamic-table corruptions, not structural.
-use crate::crash::{Crash, Loader::Musl, Repro::RawArtifact, Signal::*};
+use crate::crash::{Crash, Target::Musl, Repro::RawArtifact, Signal::*};
 use crate::elf::ImageSpec;
 
 /// SIGSEGV in `sysv_lookup`.
 pub const MUSL_SYSV_LOOKUP_261: Crash = Crash {
     id: "musl_sysv_lookup_261",
-    loader: Musl,
+    target: Musl,
     signal: Segv,
     site: "sysv_lookup (dynlink.c:261)",
     repro: RawArtifact,
@@ -22,7 +22,7 @@ pub const MUSL_SYSV_LOOKUP_261: Crash = Crash {
 /// SIGSEGV in `reloc_all`.
 pub const MUSL_RELOC_ALL_430: Crash = Crash {
     id: "musl_reloc_all_430",
-    loader: Musl,
+    target: Musl,
     signal: Segv,
     site: "reloc_all (dynlink.c:430)",
     repro: RawArtifact,
@@ -33,7 +33,7 @@ pub const MUSL_RELOC_ALL_430: Crash = Crash {
 /// SIGSEGV in `load_direct_deps`.
 pub const MUSL_LOAD_DIRECT_DEPS_1067: Crash = Crash {
     id: "musl_load_direct_deps_1067",
-    loader: Musl,
+    target: Musl,
     signal: Segv,
     site: "load_direct_deps (dynlink.c:1067)",
     repro: RawArtifact,
@@ -44,7 +44,7 @@ pub const MUSL_LOAD_DIRECT_DEPS_1067: Crash = Crash {
 /// SIGSEGV in `do_relr_relocs`.
 pub const MUSL_DO_RELR_RELOCS_570: Crash = Crash {
     id: "musl_do_relr_relocs_570",
-    loader: Musl,
+    target: Musl,
     signal: Segv,
     site: "do_relr_relocs (dynlink.c:570)",
     repro: RawArtifact,
@@ -55,7 +55,7 @@ pub const MUSL_DO_RELR_RELOCS_570: Crash = Crash {
 /// SIGSEGV in `__dls3`.
 pub const MUSL___DLS3_1414: Crash = Crash {
     id: "musl___dls3_1414",
-    loader: Musl,
+    target: Musl,
     signal: Segv,
     site: "__dls3 (dynlink.c:1414)",
     repro: RawArtifact,
@@ -66,7 +66,7 @@ pub const MUSL___DLS3_1414: Crash = Crash {
 /// SIGBUS in `memset`.
 pub const MUSL_MEMSET_847: Crash = Crash {
     id: "musl_memset_847",
-    loader: Musl,
+    target: Musl,
     signal: Bus,
     site: "memset (dynlink.c:847)",
     repro: RawArtifact,
@@ -77,7 +77,7 @@ pub const MUSL_MEMSET_847: Crash = Crash {
 /// SIGSEGV in `do_relocs`.
 pub const MUSL_DO_RELOCS_473: Crash = Crash {
     id: "musl_do_relocs_473",
-    loader: Musl,
+    target: Musl,
     signal: Segv,
     site: "do_relocs (dynlink.c:473)",
     repro: RawArtifact,
@@ -88,7 +88,7 @@ pub const MUSL_DO_RELOCS_473: Crash = Crash {
 /// SIGSEGV in `do_relocs`.
 pub const MUSL_DO_RELOCS_486: Crash = Crash {
     id: "musl_do_relocs_486",
-    loader: Musl,
+    target: Musl,
     signal: Segv,
     site: "do_relocs (dynlink.c:486)",
     repro: RawArtifact,
@@ -99,7 +99,7 @@ pub const MUSL_DO_RELOCS_486: Crash = Crash {
 /// SIGSEGV in `do_relocs`.
 pub const MUSL_DO_RELOCS_345: Crash = Crash {
     id: "musl_do_relocs_345",
-    loader: Musl,
+    target: Musl,
     signal: Segv,
     site: "do_relocs (dynlink.c:345)",
     repro: RawArtifact,
@@ -110,7 +110,7 @@ pub const MUSL_DO_RELOCS_345: Crash = Crash {
 /// SIGSEGV in `__dls3`.
 pub const MUSL___DLS3_852: Crash = Crash {
     id: "musl___dls3_852",
-    loader: Musl,
+    target: Musl,
     signal: Segv,
     site: "__dls3 (dynlink.c:852)",
     repro: RawArtifact,
@@ -121,7 +121,7 @@ pub const MUSL___DLS3_852: Crash = Crash {
 /// SIGSEGV in `memcpy`.
 pub const MUSL_MEMCPY_66: Crash = Crash {
     id: "musl_memcpy_66",
-    loader: Musl,
+    target: Musl,
     signal: Segv,
     site: "__copy_tls memcpy (__init_tls.c:66)",
     repro: RawArtifact,

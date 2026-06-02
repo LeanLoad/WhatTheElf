@@ -8,11 +8,14 @@
 //! same `gen` -> `fixtures/` -> `check` pipeline via `id` + [`Crash::image`].
 use crate::elf::{Image, ImageSpec};
 
-/// Which loader the input crashes.
+/// Which target (loader, emulator, or tool) the input crashes.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
-pub enum Loader {
+pub enum Target {
     Glibc,
     Musl,
+    /// qemu-user — its own ELF loader, before the guest runs.
+    Qemu,
+    LlvmObjdump,
 }
 
 /// The fault signal observed.
@@ -22,6 +25,9 @@ pub enum Signal {
     Segv,
     /// SIGBUS — typically a store to a file-backed page past end-of-file.
     Bus,
+    /// An aborting fault — an assertion (SIGABRT) or GLib breakpoint (SIGTRAP),
+    /// e.g. qemu-user's own loader bailing out.
+    Abort,
 }
 
 /// How faithfully the case represents the original fuzzer finding.
@@ -38,8 +44,8 @@ pub enum Repro {
 pub struct Crash {
     /// Fixture name written under `fixtures/`.
     pub id: &'static str,
-    /// Loader that faults on this input.
-    pub loader: Loader,
+    /// Target (loader/emulator/tool) that faults on this input.
+    pub target: Target,
     /// Observed fault signal (see `details` when a site can raise either).
     pub signal: Signal,
     /// Faulting site: function plus `file:line`, e.g.
@@ -59,11 +65,13 @@ impl Crash {
     }
 }
 
-impl Loader {
+impl Target {
     pub const fn name(self) -> &'static str {
         match self {
-            Loader::Glibc => "glibc",
-            Loader::Musl => "musl",
+            Target::Glibc => "glibc",
+            Target::Musl => "musl",
+            Target::Qemu => "qemu-user",
+            Target::LlvmObjdump => "llvm-objdump",
         }
     }
 }
@@ -73,6 +81,7 @@ impl Signal {
         match self {
             Signal::Segv => "SIGSEGV",
             Signal::Bus => "SIGBUS",
+            Signal::Abort => "abort", // SIGABRT / SIGTRAP (assertion or aborting allocator)
         }
     }
 }

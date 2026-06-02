@@ -9,7 +9,7 @@ use std::error::Error;
 use std::fs;
 use std::path::Path;
 
-use whattheelf::crash::{Crash, Loader, Signal};
+use whattheelf::crash::{Crash, Signal, Target};
 use whattheelf::{cases, crashes};
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -81,7 +81,7 @@ fn crashes_json(root: &Path) -> String {
         .map(|c| {
             serde_json::json!({
                 "id": c.id,
-                "loader": c.loader.name(),
+                "loader": c.target.name(),
                 "signal": c.signal.name(),
                 "site": c.site,
                 "repro": c.repro.name(),
@@ -148,8 +148,8 @@ fn esc(s: &str) -> String {
 
 fn render_html(root: &Path, results: &Results) -> String {
     let mut h = String::new();
-    let glibc = crashes::ALL.iter().filter(|c| c.loader == Loader::Glibc).count();
-    let musl = crashes::ALL.iter().filter(|c| c.loader == Loader::Musl).count();
+    let glibc = crashes::ALL.iter().filter(|c| c.target == Target::Glibc).count();
+    let musl = crashes::ALL.iter().filter(|c| c.target == Target::Musl).count();
 
     h.push_str("<!doctype html><html lang=en><head><meta charset=utf-8>");
     h.push_str("<meta name=viewport content=\"width=device-width,initial-scale=1\">");
@@ -159,15 +159,21 @@ fn render_html(root: &Path, results: &Results) -> String {
     h.push_str("<h1>WhatTheElf — dynamic-loader fuzzing report</h1>");
     h.push_str(&summary(glibc, musl, results));
 
-    // Crashes, grouped by loader.
-    h.push_str("<h2>Loader crashes</h2>");
-    for (loader, label) in [
-        (Loader::Glibc, "glibc — ld.so --preload exitfirst.so (full load)"),
-        (Loader::Musl, "musl — ld-musl --list"),
+    // Crashes, grouped by target.
+    h.push_str("<h2>Crashes</h2>");
+    for (target, label) in [
+        (Target::Glibc, "glibc — ld.so --preload exitfirst.so (full load)"),
+        (Target::Musl, "musl — ld-musl --list"),
+        (Target::Qemu, "qemu-user — qemu-x86_64 (its own loader, pre-guest)"),
+        (Target::LlvmObjdump, "llvm-objdump — llvm-objdump -p (FRIDA-mode binary fuzzing)"),
     ] {
+        let rows: Vec<_> = crashes::ALL.iter().filter(|c| c.target == target).collect();
+        if rows.is_empty() {
+            continue;
+        }
         h.push_str(&format!("<h3>{}</h3>", esc(label)));
         h.push_str("<table class=crashes><thead><tr><th>id<th>signal<th>fault site<th>bytes<th>details</tr></thead><tbody>");
-        for c in crashes::ALL.iter().filter(|c| c.loader == loader) {
+        for c in rows {
             h.push_str(&crash_row(root, c));
         }
         h.push_str("</tbody></table>");
@@ -220,6 +226,9 @@ fn summary(glibc: usize, musl: usize, results: &Results) -> String {
     };
     let backends: BTreeSet<&str> = results.keys().map(|(b, _)| b.as_str()).collect();
     let unexpected: usize = results.values().filter(|c| is_unexpected(&c.category)).count();
+    let by = |t: Target| crashes::ALL.iter().filter(|c| c.target == t).count();
+    let qemu = by(Target::Qemu);
+    let objdump = by(Target::LlvmObjdump);
 
     let mut h = String::from("<section class=abstract><h2>Findings</h2>");
     h.push_str(&format!(
@@ -227,9 +236,9 @@ fn summary(glibc: usize, musl: usize, results: &Results) -> String {
          <b>musl</b> dynamic loaders — fuzzed with AFL++ — and through a panel of ELF tools, \
          looking for inputs that <em>crash</em> rather than cleanly accept or reject. \
          Alongside <b>{n_struct}</b> hand-written structural cases, <b>{n_crash}</b> are \
-         fuzzer-found loader crashes (<b>{glibc}</b> glibc, <b>{musl}</b> musl), each reduced \
-         to one representative per fault site and confirmed to reproduce on the stock system \
-         loaders.</p>"
+         crashes reduced to one representative per fault site, each confirmed to reproduce on \
+         the stock binaries: <b>{glibc}</b> glibc, <b>{musl}</b> musl, <b>{qemu}</b> qemu-user \
+         (its own loader), and <b>{objdump}</b> llvm-objdump.</p>"
     ));
     h.push_str(
         "<p>The headline: cheap header validation turns these away — glibc's \
@@ -270,6 +279,7 @@ fn crash_row(root: &Path, c: &Crash) -> String {
     let sigcls = match c.signal {
         Signal::Segv => "sig-segv",
         Signal::Bus => "sig-bus",
+        Signal::Abort => "sig-abort",
     };
     format!(
         "<tr><td class=mono>{id}</td>\
@@ -418,7 +428,7 @@ th{background:#fafafa;font-weight:600;font-size:.82rem;text-transform:uppercase;
 .details{color:#333;font-size:.88rem}.tags{color:#777;font-size:.85rem;white-space:nowrap}\
 .num{text-align:right;font-variant-numeric:tabular-nums;color:#666}\
 .badge{display:inline-block;padding:.05rem .45rem;border-radius:99px;font-size:.78rem;font-weight:600;white-space:nowrap}\
-.sig-segv{background:#fde2e1;color:#a11}.sig-bus{background:#fff0d6;color:#a60}\
+.sig-segv{background:#fde2e1;color:#a11}.sig-bus{background:#fff0d6;color:#a60}.sig-abort{background:#ede1fb;color:#73c}\
 .findcell{line-height:2.1}.findings .badge{font-family:ui-monospace,monospace}\
 .scroll{overflow-x:auto}.matrix td,.matrix th{white-space:nowrap}\
 .cell{text-align:center;font-size:.78rem}\
