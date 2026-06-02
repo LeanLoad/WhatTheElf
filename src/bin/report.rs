@@ -224,54 +224,59 @@ fn summary(glibc: usize, musl: usize, results: &Results) -> String {
             .filter(|((bk, _), c)| bk == b && c.category == "crash")
             .count()
     };
-    let backends: BTreeSet<&str> = results.keys().map(|(b, _)| b.as_str()).collect();
-    let unexpected: usize = results.values().filter(|c| is_unexpected(&c.category)).count();
     let by = |t: Target| crashes::ALL.iter().filter(|c| c.target == t).count();
-    let objdump = by(Target::LlvmObjdump);
+    let backends: BTreeSet<&str> = results.keys().map(|(b, _)| b.as_str()).collect();
+    let crash_rows: usize = results.values().filter(|c| c.category == "crash").count();
+    let never = backends.iter().filter(|b| crash_count(b) == 0).count();
+    let g = crash_count("ld-glibc");
+    let m = crash_count("ld-musl");
+    let q = crash_count("qemu-x86_64");
+    let o = crash_count("llvm-objdump");
 
     let mut h = String::from("<section class=abstract><h2>Findings</h2>");
     h.push_str(&format!(
-        "<p>WhatTheElf feeds deliberately malformed ELF files to the <b>glibc</b> and \
-         <b>musl</b> dynamic loaders — fuzzed with AFL++ — and through a panel of ELF tools, \
-         looking for inputs that <em>crash</em> rather than cleanly accept or reject. \
-         Alongside <b>{n_struct}</b> hand-written structural cases, <b>{n_crash}</b> are \
-         curated crashes, one representative per fault site, each confirmed on the stock \
-         binaries: <b>{glibc}</b> glibc, <b>{musl}</b> musl, and <b>{objdump}</b> llvm-objdump \
-         (binary-only fuzzing). Further crashes — notably in qemu-user's own loader — show up \
-         only in the backend matrix below.</p>"
+        "<p>WhatTheElf runs deliberately malformed ELF files through {} ELF backends — two \
+         dynamic loaders (glibc, musl), the qemu-user emulator, and a panel of inspection tools \
+         — looking for inputs that <em>crash</em> a backend rather than being cleanly accepted \
+         or rejected. The corpus is <b>{n_struct}</b> hand-written structural cases plus \
+         <b>{n_crash}</b> AFL++-found crashes reduced to one representative per fault site \
+         (<b>{glibc}</b> glibc, <b>{musl}</b> musl, <b>{objdump}</b> llvm-objdump), all \
+         confirmed on the stock binaries.</p>",
+        backends.len(),
+        objdump = by(Target::LlvmObjdump),
+    ));
+    h.push_str(&format!(
+        "<p>The headline is a clean split: <b>only backends that <em>act on</em> the ELF \
+         structure crash — the ones that merely inspect it never do</b>. Crashing: glibc's \
+         loader (<b>{g}</b> inputs), musl's loader (<b>{m}</b>), qemu-user (<b>{q}</b>), and — \
+         alone among the inspection tools — llvm-objdump (<b>{o}</b>). The other <b>{never}</b> \
+         backends (readelf, llvm-readelf, eu-readelf, objdump, pyelftools, the `object` crate, \
+         file, scanelf, patchelf, eu-elflint, and the kernel's execve) handle all \
+         <b>{n_struct_plus}</b> inputs without crashing — they reject, warn, or leniently \
+         accept.</p>",
+        n_struct_plus = n_struct + n_crash,
     ));
     h.push_str(
-        "<p>The headline: <b>there is no cheap validation gate that turns these away — the \
-         loaders crash in the real work of loading them</b>. Even glibc's <code>--verify</code>, \
-         which sounds like a safe \"just check it\" mode, already mmaps the segments and walks \
-         the program headers, so it faults too (all the curated glibc inputs crash it). The \
-         faults span the whole pipeline — segment mapping and <code>.bss</code> zero-fill, \
-         symbol resolution, REL/RELA/RELR relocation, dependency loading, and TLS setup; the \
-         deeper the load goes, the more inputs crash. One input, \
-         <code>glibc_dyn_lsoname_oob</code> — a <code>PT_DYNAMIC</code> whose entry walk runs \
-         off into unmapped memory — crashes <b>glibc, musl, and llvm-objdump</b> alike.</p>",
+        "<p>For the loaders there is <b>no cheap validation gate</b>: even glibc's \
+         <code>--verify</code> already mmaps the segments and walks the program headers, so it \
+         faults just like a full load. The faults span the whole loading pipeline — segment \
+         mapping and <code>.bss</code> zero-fill, symbol resolution, REL/RELA/RELR relocation, \
+         dependency loading, and TLS setup. <b>qemu-user is the least hardened</b>: its own \
+         loader crashes <em>before the guest runs</em> (host SIGSEGV/SIGBUS mapping wild \
+         addresses, a <code>pgb_dynamic</code> assertion, a GLib over-allocation abort) — a \
+         separate handful of inputs merely run the loaded garbage and fault in the guest, which \
+         is not a qemu bug. The broadest input, <code>glibc_dyn_lsoname_oob</code> — a \
+         <code>PT_DYNAMIC</code> whose entry walk runs off into unmapped memory — crashes \
+         <b>glibc, musl, and llvm-objdump</b> at once; most other inputs crash just one backend.</p>",
     );
-    if !results.is_empty() {
-        h.push_str(&format!(
-            "<p>Across all <b>{}</b> backends, <b>{unexpected}</b> backend×case runs ended in a \
-             crash (everything else cleanly accepted or rejected). <b>qemu-user</b> is the least \
-             hardened — its own pre-launch ELF loader crashes or asserts on <b>{}</b> inputs (a \
-             GLib out-of-memory abort, a <code>pgb_dynamic</code> assertion); even \
-             <code>llvm-objdump</code> segfaults on <b>{}</b>. The strict validators \
-             (<code>eu-elflint</code>, kernel <code>execve</code>) and lenient scanners never \
-             crash.</p>",
-            backends.len(),
-            crash_count("qemu-x86_64"),
-            crash_count("llvm-objdump"),
-        ));
-    }
-    h.push_str(
-        "<p class=muted>The loaders are exercised <em>non-executing</em> — glibc \
-         <code>ld.so --verify</code> / <code>--preload</code> (an exit-lib that stops after \
-         relocation) and <code>ld-musl --list</code> — so we fuzz the loader, not the loaded \
-         program. Crash catalogue, all unexpected outcomes, and the full backend×case matrix \
-         (click any cell for its stdout/stderr) follow.</p>",
-    );
+    h.push_str(&format!(
+        "<p class=muted>{crash_rows} of the {} backend×case runs crashed. Loaders are exercised \
+         <em>non-executing</em> — glibc <code>ld.so --preload</code> (an exit-lib that stops \
+         after relocation) and <code>ld-musl --list</code>; llvm-objdump and qemu are fuzzed \
+         binary-only (AFL++ FRIDA mode). Crash catalogue, all unexpected outcomes, and the full \
+         backend×case matrix (click any cell for its stdout/stderr) follow.</p>",
+        results.len(),
+    ));
     h.push_str("</section>");
     h
 }
