@@ -10,6 +10,8 @@
 /check.out
 /tools/
 /fixtures_out/
+/fuzz-out/
+/logs/
 
 # Runtime crash artifacts
 /core

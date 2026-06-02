@@ -1,0 +1,9 @@
+# AFL++ instrumentation allowlist for the glibc dynamic loader.
+#
+# ld.so runs its own bootstrap/self-relocation before it can resolve the
+# coverage map pointer, so instrumenting those paths crashes the loader the
+# instant the first inlined edge write hits an unrelocated __afl_area_ptr.
+# Restrict instrumentation to the ELF-parsing code exercised by `--verify`
+# (open_verify / _dl_map_object_from_fd and the header & phdr checks), all of
+# which live in dl-load.c and run only after the loader has relocated itself.
+src:dl-load.c

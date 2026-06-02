@@ -12,6 +12,7 @@ const SHSTRTAB: &[u8] = b"\0.shstrtab\0.dynstr\0.version\0";
 pub const VERDEF_TRUNCATED_HEADER: Case = Case {
     id: "verdef_truncated_header",
     summary: "GNU version-definition section is shorter than one Verdef record.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Cardinality],
     spec: || version_section(SHT_GNU_VERDEF, vec![0; 8]),
 };
@@ -19,6 +20,7 @@ pub const VERDEF_TRUNCATED_HEADER: Case = Case {
 pub const VERDEF_BAD_AUX_OFFSET: Case = Case {
     id: "verdef_bad_aux_offset",
     summary: "GNU version-definition entry points its auxiliary record outside the section.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Containment],
     spec: || version_section(SHT_GNU_VERDEF, verdef(1, 0, 1, 1, 0, 0x40, 0)),
 };
@@ -26,6 +28,7 @@ pub const VERDEF_BAD_AUX_OFFSET: Case = Case {
 pub const VERNEED_TRUNCATED_HEADER: Case = Case {
     id: "verneed_truncated_header",
     summary: "GNU version-need section is shorter than one Verneed record.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Cardinality],
     spec: || version_section(SHT_GNU_VERNEED, vec![0; 8]),
 };
@@ -33,6 +36,7 @@ pub const VERNEED_TRUNCATED_HEADER: Case = Case {
 pub const VERNEED_BAD_AUX_OFFSET: Case = Case {
     id: "verneed_bad_aux_offset",
     summary: "GNU version-need entry points its auxiliary record outside the section.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Containment],
     spec: || version_section(SHT_GNU_VERNEED, verneed(1, 1, 0, 0x40, 0)),
 };
@@ -40,6 +44,7 @@ pub const VERNEED_BAD_AUX_OFFSET: Case = Case {
 pub const VERSYM_SIZE_ODD: Case = Case {
     id: "versym_size_odd",
     summary: "GNU version-symbol section size is not a multiple of a Versym entry.",
+    details: "",
     tags: &[Tag::Cardinality, Tag::Conjugate],
     spec: || version_section(SHT_GNU_VERSYM, vec![0]),
 };

@@ -31,6 +31,7 @@ pub const SHT_GNU_VERSYM: u32 = 0x6fffffff;
 pub const SHF_INFO_LINK: u64 = 0x40;
 
 pub const DT_NULL: i64 = 0;
+pub const DT_SONAME: i64 = 14;
 pub const DT_HASH: i64 = 4;
 pub const DT_STRTAB: i64 = 5;
 pub const DT_SYMTAB: i64 = 6;
@@ -59,6 +60,9 @@ pub struct ImageSpec {
     pub phdrs: Vec<Phdr>,
     pub shdrs: Vec<Shdr>,
     pub extras: Vec<(usize, Vec<u8>)>,
+    /// When set, the image is exactly these bytes and the header/program-header
+    /// builders are bypassed. Carries verbatim fuzzer-found inputs.
+    pub raw: Option<Vec<u8>>,
 }
 
 impl ImageSpec {
@@ -69,6 +73,20 @@ impl ImageSpec {
             phdrs: Vec::new(),
             shdrs: Vec::new(),
             extras: Vec::new(),
+            raw: None,
+        }
+    }
+
+    /// Build an image from verbatim bytes, e.g. a crash input harvested from the
+    /// fuzzer that we want to preserve as a regression case.
+    pub fn raw(bytes: Vec<u8>) -> Self {
+        Self {
+            size: bytes.len(),
+            ehdr: Ehdr::exec64(),
+            phdrs: Vec::new(),
+            shdrs: Vec::new(),
+            extras: Vec::new(),
+            raw: Some(bytes),
         }
     }
 
@@ -88,6 +106,9 @@ impl ImageSpec {
     }
 
     pub fn into_image(self) -> Image {
+        if let Some(bytes) = self.raw {
+            return Image { bytes };
+        }
         let mut image = Image::new(self.size);
         image.write_ehdr(self.ehdr);
         for (index, header) in self.phdrs.into_iter().enumerate() {

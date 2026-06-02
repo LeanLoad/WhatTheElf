@@ -13,6 +13,7 @@ const LOAD_SIZE: u64 = 0x1000;
 pub const DYNAMIC_STRTAB_WITHOUT_STRSZ: Case = Case {
     id: "dynamic_strtab_without_strsz",
     summary: "Dynamic table has DT_STRTAB but no DT_STRSZ.",
+    details: "",
     tags: &[Tag::Coexistence],
     spec: || dynamic(&[Dyn::new(DT_STRTAB, 0x900), Dyn::new(DT_NULL, 0)], &[]),
 };
@@ -20,6 +21,7 @@ pub const DYNAMIC_STRTAB_WITHOUT_STRSZ: Case = Case {
 pub const DYNAMIC_SYMTAB_WITHOUT_SYMENT: Case = Case {
     id: "dynamic_symtab_without_syment",
     summary: "Dynamic table has DT_SYMTAB but no DT_SYMENT.",
+    details: "",
     tags: &[Tag::Coexistence],
     spec: || dynamic(&[Dyn::new(DT_SYMTAB, 0x900), Dyn::new(DT_NULL, 0)], &[]),
 };
@@ -27,6 +29,7 @@ pub const DYNAMIC_SYMTAB_WITHOUT_SYMENT: Case = Case {
 pub const DYNAMIC_SYMTAB_WITHOUT_HASH: Case = Case {
     id: "dynamic_symtab_without_hash",
     summary: "Dynamic table has DT_SYMTAB and DT_SYMENT but no SysV or GNU hash table.",
+    details: "",
     tags: &[Tag::Coexistence],
     spec: || {
         dynamic(
@@ -43,6 +46,7 @@ pub const DYNAMIC_SYMTAB_WITHOUT_HASH: Case = Case {
 pub const DYNAMIC_SYMENT_ZERO: Case = Case {
     id: "dynamic_syment_zero",
     summary: "Dynamic table declares a symbol table with zero DT_SYMENT.",
+    details: "",
     tags: &[Tag::Conjugate, Tag::Cardinality],
     spec: || {
         dynamic(
@@ -60,6 +64,7 @@ pub const DYNAMIC_SYMENT_ZERO: Case = Case {
 pub const DYNAMIC_STRTAB_OOB: Case = Case {
     id: "dynamic_strtab_oob",
     summary: "DT_STRTAB virtual address is outside every loadable segment.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Containment],
     spec: || {
         dynamic(
@@ -76,6 +81,7 @@ pub const DYNAMIC_STRTAB_OOB: Case = Case {
 pub const DYNAMIC_STRTAB_SIZE_OOB: Case = Case {
     id: "dynamic_strtab_size_oob",
     summary: "DT_STRTAB starts in a loadable segment but DT_STRSZ extends beyond it.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Containment],
     spec: || {
         dynamic(
@@ -92,6 +98,7 @@ pub const DYNAMIC_STRTAB_SIZE_OOB: Case = Case {
 pub const DYNAMIC_HASH_OOB: Case = Case {
     id: "dynamic_hash_oob",
     summary: "DT_HASH points outside every loadable segment.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Containment],
     spec: || dynamic(&[Dyn::new(DT_HASH, 0x2000), Dyn::new(DT_NULL, 0)], &[]),
 };
@@ -99,6 +106,7 @@ pub const DYNAMIC_HASH_OOB: Case = Case {
 pub const DYNAMIC_HASH_SELF_LOOP: Case = Case {
     id: "dynamic_hash_self_loop",
     summary: "SysV hash table chain points back to itself.",
+    details: "",
     tags: &[Tag::Consistency, Tag::Bounds],
     spec: || {
         dynamic(
@@ -122,6 +130,7 @@ pub const DYNAMIC_HASH_SELF_LOOP: Case = Case {
 pub const DYNAMIC_GNU_HASH_OOB: Case = Case {
     id: "dynamic_gnu_hash_oob",
     summary: "DT_GNU_HASH points outside every loadable segment.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Containment],
     spec: || dynamic(&[Dyn::new(DT_GNU_HASH, 0x2000), Dyn::new(DT_NULL, 0)], &[]),
 };
@@ -129,6 +138,7 @@ pub const DYNAMIC_GNU_HASH_OOB: Case = Case {
 pub const DYNAMIC_GNU_HASH_ZERO_BUCKETS: Case = Case {
     id: "dynamic_gnu_hash_zero_buckets",
     summary: "GNU hash table header declares zero buckets.",
+    details: "",
     tags: &[Tag::Cardinality, Tag::Consistency],
     spec: || {
         dynamic(
@@ -146,6 +156,7 @@ pub const DYNAMIC_GNU_HASH_ZERO_BUCKETS: Case = Case {
 pub const DYNAMIC_GNU_HASH_ZERO_BLOOM_WORDS: Case = Case {
     id: "dynamic_gnu_hash_zero_bloom_words",
     summary: "GNU hash table header declares zero bloom filter words.",
+    details: "",
     tags: &[Tag::Cardinality, Tag::Consistency],
     spec: || {
         dynamic(
@@ -163,6 +174,7 @@ pub const DYNAMIC_GNU_HASH_ZERO_BLOOM_WORDS: Case = Case {
 pub const DYNAMIC_GNU_HASH_BAD_CHAIN_PTR: Case = Case {
     id: "dynamic_gnu_hash_bad_chain_ptr",
     summary: "GNU hash bucket points below symoffset, making the chain pointer underflow.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Consistency],
     spec: || {
         dynamic(
@@ -186,6 +198,7 @@ pub const DYNAMIC_GNU_HASH_BAD_CHAIN_PTR: Case = Case {
 pub const DYNAMIC_VERNEED_WITHOUT_COUNT: Case = Case {
     id: "dynamic_verneed_without_count",
     summary: "Dynamic table has DT_VERNEED but no DT_VERNEEDNUM.",
+    details: "",
     tags: &[Tag::Coexistence],
     spec: || dynamic(&[Dyn::new(DT_VERNEED, 0x900), Dyn::new(DT_NULL, 0)], &[]),
 };
@@ -193,6 +206,7 @@ pub const DYNAMIC_VERNEED_WITHOUT_COUNT: Case = Case {
 pub const DYNAMIC_VERSYM_OOB: Case = Case {
     id: "dynamic_versym_oob",
     summary: "Dynamic version-symbol table points outside every loadable segment.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Containment],
     spec: || {
         dynamic(
@@ -217,6 +231,7 @@ pub const DYNAMIC_VERSYM_OOB: Case = Case {
 pub const DYNAMIC_RELR_WITHOUT_SIZE: Case = Case {
     id: "dynamic_relr_without_size",
     summary: "Dynamic table has DT_RELR but no DT_RELRSZ.",
+    details: "",
     tags: &[Tag::Coexistence],
     spec: || dynamic(&[Dyn::new(DT_RELR, 0x900), Dyn::new(DT_NULL, 0)], &[]),
 };
@@ -224,6 +239,7 @@ pub const DYNAMIC_RELR_WITHOUT_SIZE: Case = Case {
 pub const DYNAMIC_RELRENT_WRONG: Case = Case {
     id: "dynamic_relrent_wrong",
     summary: "Dynamic table declares RELR entries with a non-word entry size.",
+    details: "",
     tags: &[Tag::Conjugate, Tag::Encoding],
     spec: || {
         dynamic(
@@ -241,6 +257,7 @@ pub const DYNAMIC_RELRENT_WRONG: Case = Case {
 pub const DYNAMIC_RELR_OOB: Case = Case {
     id: "dynamic_relr_oob",
     summary: "DT_RELR/DT_RELRSZ describes a RELR table outside every loadable segment.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Containment],
     spec: || {
         dynamic(
@@ -258,6 +275,7 @@ pub const DYNAMIC_RELR_OOB: Case = Case {
 pub const DYNAMIC_RELENT_ZERO: Case = Case {
     id: "dynamic_relent_zero",
     summary: "Dynamic table declares a REL relocation table with zero DT_RELENT.",
+    details: "",
     tags: &[Tag::Conjugate, Tag::Cardinality],
     spec: || {
         dynamic(
@@ -277,6 +295,7 @@ pub const DYNAMIC_RELENT_ZERO: Case = Case {
 pub const DYNAMIC_NULL_MISSING: Case = Case {
     id: "dynamic_null_missing",
     summary: "Dynamic table has entries but no DT_NULL terminator.",
+    details: "",
     tags: &[Tag::Existence, Tag::Coexistence],
     spec: || {
         dynamic(

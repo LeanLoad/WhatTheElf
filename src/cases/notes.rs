@@ -6,6 +6,7 @@ const NOTE_OFFSET: usize = 0xb0;
 pub const NOTE_TRUNCATED_HEADER: Case = Case {
     id: "note_truncated_header",
     summary: "PT_NOTE segment is shorter than one note header.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Cardinality],
     spec: || note(vec![0; 8]),
 };
@@ -13,6 +14,7 @@ pub const NOTE_TRUNCATED_HEADER: Case = Case {
 pub const NOTE_HEADER_SHORT_FIELDS: Case = Case {
     id: "note_header_short_fields",
     summary: "PT_NOTE segment stops in the middle of the note type field.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Cardinality],
     spec: || {
         let mut bytes = Vec::new();
@@ -26,6 +28,7 @@ pub const NOTE_HEADER_SHORT_FIELDS: Case = Case {
 pub const NOTE_NAME_OOB: Case = Case {
     id: "note_name_oob",
     summary: "Note header namesz extends beyond the PT_NOTE segment.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Containment],
     spec: || note(note_header(0x100, 0, 1)),
 };
@@ -33,6 +36,7 @@ pub const NOTE_NAME_OOB: Case = Case {
 pub const NOTE_DESC_OOB: Case = Case {
     id: "note_desc_oob",
     summary: "Note header descsz extends beyond the PT_NOTE segment.",
+    details: "",
     tags: &[Tag::Bounds, Tag::Containment],
     spec: || {
         let mut bytes = note_header(4, 0x100, 1);
