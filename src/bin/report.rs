@@ -19,7 +19,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     fs::create_dir_all(&out)?;
 
     let results = read_results(&root.join("results").join("summary.tsv"));
-    let html = render_html(root, &results);
+    let html = render_html(&results);
     fs::write(out.join("index.html"), html)?;
     fs::write(out.join("crashes.json"), crashes_json(root))?;
     println!("wrote {}/index.html", out.display());
@@ -146,7 +146,7 @@ fn esc(s: &str) -> String {
         .replace('>', "&gt;")
 }
 
-fn render_html(root: &Path, results: &Results) -> String {
+fn render_html(results: &Results) -> String {
     let mut h = String::new();
     let glibc = crashes::ALL.iter().filter(|c| c.target == Target::Glibc).count();
     let musl = crashes::ALL.iter().filter(|c| c.target == Target::Musl).count();
@@ -172,9 +172,9 @@ fn render_html(root: &Path, results: &Results) -> String {
             continue;
         }
         h.push_str(&format!("<h3>{}</h3>", esc(label)));
-        h.push_str("<table class=crashes><thead><tr><th>id<th>fault site<th>bytes<th>details</tr></thead><tbody>");
+        h.push_str("<table class=crashes><thead><tr><th>id<th>fault site<th>details</tr></thead><tbody>");
         for c in rows {
-            h.push_str(&crash_row(root, c));
+            h.push_str(&crash_row(c));
         }
         h.push_str("</tbody></table>");
     }
@@ -283,15 +283,13 @@ fn summary(glibc: usize, musl: usize, results: &Results) -> String {
     h
 }
 
-fn crash_row(root: &Path, c: &Crash) -> String {
+fn crash_row(c: &Crash) -> String {
     format!(
         "<tr><td class=mono>{id}</td>\
          <td class=mono>{site}</td>\
-         <td class=num>{bytes}</td>\
          <td class=details>{details}</td></tr>",
         id = esc(c.id),
         site = esc(c.site),
-        bytes = fixture_len(root, c.id),
         details = esc(c.details),
     )
 }
