@@ -1,7 +1,5 @@
 mod dynamic;
-mod glibc_crashes;
 mod headers;
-mod musl_crashes;
 mod interp_sections;
 mod notes;
 mod program_headers;
@@ -85,24 +83,6 @@ pub const ALL: &[Case] = &[
     versions::VERNEED_TRUNCATED_HEADER,
     versions::VERNEED_BAD_AUX_OFFSET,
     versions::VERSYM_SIZE_ODD,
-    // glibc ld.so --verify crashes (structured reproducers + raw-for-reference)
-    glibc_crashes::LOAD_MEMSZ_PAST_EOF,
-    glibc_crashes::LOAD_WILD_VADDR_PHDR,
-    glibc_crashes::DYN_LSONAME_OOB,
-    glibc_crashes::RTLD_STARTUP_STRCMP,
-    glibc_crashes::WILD_VADDR_ASLR,
-    // musl ld.so --list crashes (one per distinct fault site)
-    musl_crashes::MUSL_SYSV_LOOKUP_261,
-    musl_crashes::MUSL_RELOC_ALL_430,
-    musl_crashes::MUSL_LOAD_DIRECT_DEPS_1067,
-    musl_crashes::MUSL_DO_RELR_RELOCS_570,
-    musl_crashes::MUSL___DLS3_1414,
-    musl_crashes::MUSL_MEMSET_847,
-    musl_crashes::MUSL_DO_RELOCS_473,
-    musl_crashes::MUSL_DO_RELOCS_486,
-    musl_crashes::MUSL_DO_RELOCS_345,
-    musl_crashes::MUSL___DLS3_852,
-    musl_crashes::MUSL_MEMCPY_66,
 ];
 
 pub(crate) fn load_phdr() -> Phdr {

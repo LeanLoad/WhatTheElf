@@ -11,7 +11,6 @@ const INTERP_NAME: u32 = 11;
 pub const INTERP_SECTION_MISSING: Case = Case {
     id: "interp_section_missing",
     summary: "Section table has names but no .interp section.",
-    details: "",
     tags: &[Tag::Existence],
     spec: || {
         ImageSpec::new(
@@ -27,7 +26,6 @@ pub const INTERP_SECTION_MISSING: Case = Case {
 pub const INTERP_SHNAME_OOB: Case = Case {
     id: "interp_shname_oob",
     summary: ".interp-like section has a name offset outside .shstrtab.",
-    details: "",
     tags: &[Tag::Bounds],
     spec: || {
         section(
@@ -43,7 +41,6 @@ pub const INTERP_SHNAME_OOB: Case = Case {
 pub const INTERP_SHOFFSET_OOB: Case = Case {
     id: "interp_shoffset_oob",
     summary: ".interp section file range points beyond the file.",
-    details: "",
     tags: &[Tag::Bounds, Tag::Containment],
     spec: || {
         section(
@@ -59,7 +56,6 @@ pub const INTERP_SHOFFSET_OOB: Case = Case {
 pub const INTERP_SHSIZE_ZERO: Case = Case {
     id: "interp_shsize_zero",
     summary: ".interp section exists but has zero size.",
-    details: "",
     tags: &[Tag::Existence, Tag::Cardinality],
     spec: || {
         section(
@@ -75,7 +71,6 @@ pub const INTERP_SHSIZE_ZERO: Case = Case {
 pub const INTERP_SECTION_NO_NUL: Case = Case {
     id: "interp_section_no_nul",
     summary: ".interp section content is not NUL-terminated.",
-    details: "",
     tags: &[Tag::Encoding, Tag::Consistency],
     spec: || {
         section(

@@ -20,5 +20,9 @@ name = "check"
 path = "src/bin/check.rs"
 
 [[bin]]
+name = "report"
+path = "src/bin/report.rs"
+
+[[bin]]
 name = "kernel-execve"
 path = "src/bin/kernel_execve.rs"

@@ -1,0 +1,228 @@
+//! `report` — render the case/crash catalog (and any `check` results) to a
+//! self-contained HTML page, plus a machine-readable `crashes.json`.
+//!
+//! The Rust definitions (`cases::ALL`, `crashes::ALL`) are the single source of
+//! truth; this just projects them. Usage: `report [OUT_DIR]` (default `site`).
+use std::collections::{BTreeMap, BTreeSet};
+use std::error::Error;
+use std::fs;
+use std::path::Path;
+
+use whattheelf::crash::{Crash, Loader, Repro, Signal};
+use whattheelf::{cases, crashes};
+
+fn main() -> Result<(), Box<dyn Error>> {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let out = std::env::args().nth(1).unwrap_or_else(|| "site".to_string());
+    let out = root.join(out);
+    fs::create_dir_all(&out)?;
+
+    let results = read_results(&root.join("results").join("summary.tsv"));
+    let html = render_html(root, &results);
+    fs::write(out.join("index.html"), html)?;
+    fs::write(out.join("crashes.json"), crashes_json(root))?;
+
+    println!("wrote {}/index.html", out.display());
+    println!("wrote {}/crashes.json", out.display());
+    Ok(())
+}
+
+// ---- results matrix ------------------------------------------------------
+
+/// (backend, case) -> category, parsed from results/summary.tsv if present.
+type Results = BTreeMap<(String, String), String>;
+
+fn read_results(path: &Path) -> Results {
+    let mut map = Results::new();
+    let Ok(text) = fs::read_to_string(path) else {
+        return map;
+    };
+    for line in text.lines().skip(1) {
+        let f: Vec<&str> = line.split('\t').collect();
+        if f.len() >= 3 {
+            map.insert((f[0].to_string(), f[1].to_string()), f[2].to_string());
+        }
+    }
+    map
+}
+
+// ---- JSON export ---------------------------------------------------------
+
+fn crashes_json(root: &Path) -> String {
+    let arr: Vec<_> = crashes::ALL
+        .iter()
+        .map(|c| {
+            serde_json::json!({
+                "id": c.id,
+                "loader": c.loader.name(),
+                "signal": c.signal.name(),
+                "site": c.site,
+                "repro": c.repro.name(),
+                "details": c.details,
+                "bytes": fixture_len(root, c.id),
+            })
+        })
+        .collect();
+    serde_json::to_string_pretty(&arr).unwrap_or_default()
+}
+
+fn fixture_len(root: &Path, id: &str) -> u64 {
+    fs::metadata(root.join("fixtures").join(id))
+        .map(|m| m.len())
+        .unwrap_or(0)
+}
+
+// ---- HTML ----------------------------------------------------------------
+
+fn esc(s: &str) -> String {
+    s.replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+}
+
+fn render_html(root: &Path, results: &Results) -> String {
+    let mut h = String::new();
+    let glibc = crashes::ALL.iter().filter(|c| c.loader == Loader::Glibc).count();
+    let musl = crashes::ALL.iter().filter(|c| c.loader == Loader::Musl).count();
+
+    h.push_str("<!doctype html><html lang=en><head><meta charset=utf-8>");
+    h.push_str("<meta name=viewport content=\"width=device-width,initial-scale=1\">");
+    h.push_str("<title>WhatTheElf — loader fuzzing report</title>");
+    h.push_str(STYLE);
+    h.push_str("</head><body><main>");
+    h.push_str("<h1>WhatTheElf — dynamic-loader fuzzing report</h1>");
+    h.push_str(&format!(
+        "<p class=lede>Malformed-ELF cases run through external loaders. \
+         <b>{}</b> structural cases; <b>{}</b> fuzzer-found crashes \
+         (<b>{glibc}</b> glibc, <b>{musl}</b> musl), all reproducing on the stock \
+         system loaders.</p>",
+        cases::ALL.len(),
+        crashes::ALL.len(),
+    ));
+
+    // Crashes, grouped by loader.
+    h.push_str("<h2>Loader crashes</h2>");
+    for (loader, label) in [(Loader::Glibc, "glibc — ld.so --verify"), (Loader::Musl, "musl — ld-musl --list")] {
+        h.push_str(&format!("<h3>{}</h3>", esc(label)));
+        h.push_str("<table class=crashes><thead><tr><th>id<th>signal<th>repro<th>fault site<th>bytes<th>details</tr></thead><tbody>");
+        for c in crashes::ALL.iter().filter(|c| c.loader == loader) {
+            h.push_str(&crash_row(root, c));
+        }
+        h.push_str("</tbody></table>");
+    }
+
+    // Backend results matrix (only if check has been run).
+    if !results.is_empty() {
+        h.push_str("<h2>Backend results</h2>");
+        h.push_str(&results_table(results));
+    } else {
+        h.push_str("<h2>Backend results</h2><p class=muted>No <code>results/summary.tsv</code> \
+                    yet — run <code>./check.sh</code> then regenerate.</p>");
+    }
+
+    // Structural cases.
+    h.push_str("<h2>Structural cases</h2>");
+    h.push_str("<table class=cases><thead><tr><th>id<th>tags<th>summary</tr></thead><tbody>");
+    for case in cases::ALL {
+        let tags: Vec<_> = case.tags.iter().map(|t| t.name()).collect();
+        h.push_str(&format!(
+            "<tr><td class=mono>{}</td><td class=tags>{}</td><td>{}</td></tr>",
+            esc(case.id),
+            esc(&tags.join(", ")),
+            esc(case.summary),
+        ));
+    }
+    h.push_str("</tbody></table>");
+
+    h.push_str("<footer>Generated by <code>report</code> from <code>cases::ALL</code> / \
+                <code>crashes::ALL</code>. Machine-readable: <code>crashes.json</code>.</footer>");
+    h.push_str("</main></body></html>");
+    h
+}
+
+fn crash_row(root: &Path, c: &Crash) -> String {
+    let sigcls = match c.signal {
+        Signal::Segv => "sig-segv",
+        Signal::Bus => "sig-bus",
+    };
+    let reprocls = match c.repro {
+        Repro::Structured => "repro-struct",
+        Repro::RawArtifact => "repro-raw",
+    };
+    format!(
+        "<tr><td class=mono>{id}</td>\
+         <td><span class=\"badge {sigcls}\">{sig}</span></td>\
+         <td><span class=\"badge {reprocls}\">{repro}</span></td>\
+         <td class=mono>{site}</td>\
+         <td class=num>{bytes}</td>\
+         <td class=details>{details}</td></tr>",
+        id = esc(c.id),
+        sig = c.signal.name(),
+        repro = c.repro.name(),
+        site = esc(c.site),
+        bytes = fixture_len(root, c.id),
+        details = esc(c.details),
+    )
+}
+
+fn results_table(results: &Results) -> String {
+    let backends: BTreeSet<&str> = results.keys().map(|(b, _)| b.as_str()).collect();
+    let cases: BTreeSet<&str> = results.keys().map(|(_, c)| c.as_str()).collect();
+    let mut h = String::from("<div class=scroll><table class=matrix><thead><tr><th>case</th>");
+    for b in &backends {
+        h.push_str(&format!("<th>{}</th>", esc(b)));
+    }
+    h.push_str("</tr></thead><tbody>");
+    for case in &cases {
+        h.push_str(&format!("<tr><td class=mono>{}</td>", esc(case)));
+        for b in &backends {
+            let cat = results
+                .get(&(b.to_string(), case.to_string()))
+                .map(String::as_str)
+                .unwrap_or("");
+            h.push_str(&format!("<td class=\"cell {}\">{}</td>", cat_class(cat), esc(cat)));
+        }
+        h.push_str("</tr>");
+    }
+    h.push_str("</tbody></table></div>");
+    h
+}
+
+fn cat_class(cat: &str) -> &'static str {
+    let c = cat.to_ascii_lowercase();
+    if c.contains("crash") {
+        "c-crash"
+    } else if c.contains("hang") || c.contains("timeout") {
+        "c-hang"
+    } else if c.contains("error") || c.contains("reject") {
+        "c-reject"
+    } else if c.contains("accept") || c.contains("ok") || c.contains("clean") {
+        "c-accept"
+    } else {
+        "c-other"
+    }
+}
+
+const STYLE: &str = "<style>\
+:root{color-scheme:light dark}\
+body{font:15px/1.5 system-ui,sans-serif;margin:0;background:#f6f7f9;color:#1a1a1a}\
+main{max-width:1100px;margin:0 auto;padding:2rem 1.25rem}\
+h1{font-size:1.6rem;margin:0 0 .3rem}h2{margin:2rem 0 .6rem;border-bottom:2px solid #ddd;padding-bottom:.2rem}\
+h3{margin:1.2rem 0 .4rem;color:#444}\
+.lede{color:#555;font-size:1.05rem}.muted{color:#888}\
+table{border-collapse:collapse;width:100%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);font-size:.92rem}\
+th,td{text-align:left;padding:.45rem .6rem;border-bottom:1px solid #eee;vertical-align:top}\
+th{background:#fafafa;font-weight:600;font-size:.82rem;text-transform:uppercase;letter-spacing:.03em;color:#666}\
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86rem;white-space:nowrap}\
+.details{color:#333;font-size:.88rem}.tags{color:#777;font-size:.85rem;white-space:nowrap}\
+.num{text-align:right;font-variant-numeric:tabular-nums;color:#666}\
+.badge{display:inline-block;padding:.05rem .45rem;border-radius:99px;font-size:.78rem;font-weight:600;white-space:nowrap}\
+.sig-segv{background:#fde2e1;color:#a11}.sig-bus{background:#fff0d6;color:#a60}\
+.repro-struct{background:#dcefe0;color:#176}.repro-raw{background:#e6e6ef;color:#449}\
+.scroll{overflow-x:auto}.matrix td,.matrix th{white-space:nowrap}\
+.cell{text-align:center;font-size:.78rem}\
+.c-crash{background:#fde2e1;color:#a11;font-weight:600}.c-hang{background:#fff0d6;color:#a60}\
+.c-reject{background:#dcefe0;color:#176}.c-accept{background:#dde7fb;color:#249}.c-other{color:#999}\
+footer{margin:2rem 0 1rem;color:#999;font-size:.85rem}\
+code{background:#eef0f2;padding:.05rem .3rem;border-radius:4px;font-size:.85em}\
+</style>";

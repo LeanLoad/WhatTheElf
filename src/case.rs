@@ -3,13 +3,7 @@ use crate::elf::{Image, ImageSpec};
 #[derive(Clone, Copy)]
 pub struct Case {
     pub id: &'static str,
-    /// One-line description (compact `check` output, summary.tsv).
     pub summary: &'static str,
-    /// Long-form analysis for cases that need it (notably fuzzer-found crashes:
-    /// fault site, triggering field, root cause). Empty when the one-line
-    /// `summary` already says everything. Kept as data, not a doc comment, so it
-    /// can be rendered elsewhere (e.g. a generated report/webpage).
-    pub details: &'static str,
     pub tags: &'static [Tag],
     pub spec: fn() -> ImageSpec,
 }

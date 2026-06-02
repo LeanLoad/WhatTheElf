@@ -97,24 +97,31 @@ set `AFL_SKIP_BIN_CHECK=1`; coverage still flows through shared memory.
 
 See `src/cases/` for the case list, summaries, and invariant tags.
 
-Most fixtures are tiny synthetic structural malformations. Two groups come from
-the fuzzer, and every crash case carries a long-form `Case.details` string (fault
-site, triggering field, root cause) as data — not just a doc comment — so it can
-be rendered elsewhere:
+The structural cases (`src/cases/`) are tiny synthetic malformations, each
+tagged with the invariant it violates. Fuzzer-found crashes are modelled
+separately as [`Crash`](src/crash.rs) (`src/crashes/`, registered in
+`crashes::ALL`): a `Crash` records the **loader**, **signal**, **fault site**,
+whether it is a structured reproducer or a kept-raw artifact (`repro`), and a
+long-form `details` analysis — all as typed data, so it can be rendered.
 
-* `src/cases/glibc_crashes.rs` — crashes in glibc `ld.so --verify`. Where the
-  mechanism is fully understood it is an *understandable structured reproducer*
-  built from the ELF builders (`LOAD_MEMSZ_PAST_EOF` — SIGBUS zero-filling `.bss`
+* `src/crashes/glibc.rs` — glibc `ld.so --verify`. Understood mechanisms are
+  *structured reproducers* (`LOAD_MEMSZ_PAST_EOF` — SIGBUS zero-filling `.bss`
   past EOF in `_dl_map_segments`; `LOAD_WILD_VADDR_PHDR` — fault in the post-map
-  program-header rescan). Where the crash depends on the loader walking off into
-  garbage memory (no clean structural form) the raw artifact is kept for
-  reference with the path explained in `details` (`DYN_LSONAME_OOB`,
-  `RTLD_STARTUP_STRCMP`, `WILD_VADDR_ASLR`).
-* `src/cases/musl_crashes.rs` — 11 musl `ld-musl --list` crashes, one per distinct
-  fault site from the 8-hour run (segment mapping, `do_relocs`/`do_relr_relocs`/
-  `reloc_all`, symbol lookup, `load_direct_deps`, `__dls3`, `__copy_tls`), kept as
-  raw artifacts since the malformations are dynamic-table corruptions.
+  program-header rescan); ones that depend on the loader walking into garbage are
+  kept raw with the path in `details` (`DYN_LSONAME_OOB`, `RTLD_STARTUP_STRCMP`,
+  `WILD_VADDR_ASLR`).
+* `src/crashes/musl.rs` — 11 musl `ld-musl --list` crashes, one per distinct
+  `dynlink.c` fault site (segment mapping, `do_relocs`/`do_relr_relocs`/
+  `reloc_all`, symbol lookup, `load_direct_deps`, `__dls3`, `__copy_tls`).
 
-All crash cases reproduce on the stock system loaders. Raw bytes live under
-tracked `crashes/` and `crashes-musl/`. These are regression inputs for loader
-robustness, not examples of valid ELF.
+Both `cases::ALL` and `crashes::ALL` flow through `gen` → `fixtures/` → `check`.
+All crash inputs reproduce on the stock system loaders; raw bytes live under
+tracked `crashes/` and `crashes-musl/`.
+
+## Report
+
+`./report.sh [OUT_DIR]` (default `site/`) renders a self-contained
+`index.html` — the crash catalogue (grouped by loader, with signal / site /
+reproducer-kind / details), the structural cases, and the backend×case results
+matrix if `check` has been run — plus a machine-readable `crashes.json`. The
+Rust definitions are the single source of truth; the report just projects them.
