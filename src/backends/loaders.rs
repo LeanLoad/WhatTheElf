@@ -7,9 +7,15 @@ pub const ALL: &[BackendSpec] = &[
         None,
         Some(default_classification),
     ),
+    // Full glibc loader lifecycle without executing the program: --preload's the
+    // freestanding exitfirst.so, whose constructor _exit()s after the loader has
+    // mapped + resolved + relocated everything but before the target's own
+    // constructors / main. Mirrors the depth of `ld-musl --list` (and reaches
+    // relocation, which `--verify` does not). Build exitfirst.so with setup.sh.
+    // (IFUNC resolvers still run during relocation.)
     BackendSpec::command(
-        "ld-linux",
-        "/lib64/ld-linux-x86-64.so.2 --verify {}",
+        "ld-glibc",
+        "/lib64/ld-linux-x86-64.so.2 --preload tools/exitfirst.so {}",
         None,
         Some(default_classification),
     ),

@@ -114,6 +114,8 @@ fn findings_json(results: &Results) -> String {
 /// `<out>/results/...` so the matrix can fetch the exact file on click. Returns
 /// the number of stream files copied.
 fn copy_streams(root: &Path, out: &Path, results: &Results) -> Result<usize, Box<dyn Error>> {
+    // Mirror cleanly: drop any stale streams (e.g. a renamed/removed backend).
+    let _ = fs::remove_dir_all(out.join("results"));
     let mut n = 0;
     for (backend, case) in results.keys() {
         let dst_dir = out.join("results").join(backend);

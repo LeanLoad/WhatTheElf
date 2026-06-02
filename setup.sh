@@ -42,6 +42,10 @@ rustup default stable
 cargo build --bin kernel-execve
 
 mkdir -p tools/bin
+
+# Freestanding preload lib for the `ld-linux-preload` backend: its constructor
+# _exit()s after the loader relocates everything but before the target runs.
+gcc -shared -fPIC -nostdlib -o tools/exitfirst.so scripts/exitfirst.c
 cargo build \
     --manifest-path ../third_party/impl-lib/gimli-object/Cargo.toml \
     --target-dir tools/object-target \

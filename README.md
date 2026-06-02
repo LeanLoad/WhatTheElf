@@ -13,7 +13,7 @@ external loaders/tools to see whether they accept, reject, hang, or crash.
 ./gen.sh
 ./check.sh
 ./check.sh qemu-x86_64
-./check.sh llvm-readelf eu-readelf ld-linux
+./check.sh llvm-readelf eu-readelf ld-glibc
 ./scripts/setup_fuzz.sh
 ./fuzz.sh
 ```
@@ -21,9 +21,10 @@ external loaders/tools to see whether they accept, reject, hang, or crash.
 `gen` builds the Rust-defined cases from `src/cases/` into ignored local ELF
 files under `fixtures/`.
 
-Case metadata lives beside each case in `src/cases/`. Invariant-tag definitions
-live in `manifest.yaml`. The low-level ELF writer lives in `src/elf.rs`; it
-intentionally permits inconsistent headers, counts, offsets, and links.
+Case metadata lives beside each case in `src/cases/`. Invariant tags are defined
+by the `Tag` enum in `src/case.rs`. The low-level ELF writer lives in
+`src/elf.rs`; it intentionally permits inconsistent headers, counts, offsets,
+and links.
 
 `setup.sh` installs the packaged backend tools on Ubuntu, including glibc,
 musl, QEMU, binutils, LLVM, elfutils, pax-utils, and patchelf. It also installs
