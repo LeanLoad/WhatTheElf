@@ -161,7 +161,10 @@ fn render_html(root: &Path, results: &Results) -> String {
 
     // Crashes, grouped by loader.
     h.push_str("<h2>Loader crashes</h2>");
-    for (loader, label) in [(Loader::Glibc, "glibc — ld.so --verify"), (Loader::Musl, "musl — ld-musl --list")] {
+    for (loader, label) in [
+        (Loader::Glibc, "glibc — ld.so --preload exitfirst.so (full load)"),
+        (Loader::Musl, "musl — ld-musl --list"),
+    ] {
         h.push_str(&format!("<h3>{}</h3>", esc(label)));
         h.push_str("<table class=crashes><thead><tr><th>id<th>signal<th>fault site<th>bytes<th>details</tr></thead><tbody>");
         for c in crashes::ALL.iter().filter(|c| c.loader == loader) {

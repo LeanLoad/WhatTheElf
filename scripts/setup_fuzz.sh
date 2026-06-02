@@ -77,6 +77,12 @@ if [[ ! -f "$AFLPP_SRC_ABS/afl-fuzz" || ! -f "$AFLPP_SRC_ABS/SanitizerCoveragePC
         NO_NYX=1
 fi
 
+# FRIDA mode (afl-frida-trace.so) for binary-only fuzzing of installed tools
+# such as llvm-objdump — no source rebuild of the target needed.
+if [[ ! -f "$AFLPP_SRC_ABS/afl-frida-trace.so" ]]; then
+    run make -C "$AFLPP_SRC_ABS/frida_mode" || echo "warning: FRIDA mode build failed (objdump backend unavailable)"
+fi
+
 CC="$AFLPP_SRC_ABS/afl-clang-fast"
 CXX="$AFLPP_SRC_ABS/afl-clang-fast++"
 AFL_CC="$HOST_CC"

@@ -82,4 +82,22 @@ if [ -x "$MUSL_LD" ]; then
 else
   echo "  (musl loader $MUSL_LD not built; skipping - run scripts/build_musl.sh)"
 fi
+
+# llvm-objdump: binary-only (FRIDA) fuzzing of the installed tool — no LLVM
+# rebuild. Seeds are valid object files (+ a few small malformed ones), kept
+# separate because objdump wants loadable inputs.
+OBJDUMP=${OBJDUMP:-$(command -v llvm-objdump || true)}
+OBJDUMP_JOBS=${OBJDUMP_JOBS:-1}
+OBJDUMP_SEEDS=${OBJDUMP_SEEDS:-$ROOT/fuzz-out/objdump-seeds}
+if [ -f "$AFL_PATH/afl-frida-trace.so" ] && [ -n "$OBJDUMP" ] && [ -d "$OBJDUMP_SEEDS" ]; then
+  for i in $(seq 1 "$OBJDUMP_JOBS"); do
+    if [ "$i" = 1 ]; then flag="-M odump"; else flag="-S odump$i"; fi
+    setsid nohup "$AFL" -O -i "$OBJDUMP_SEEDS" -o "$ROOT/fuzz-out/objdump" $flag -m none -t 3000+ \
+      -- "$OBJDUMP" -p @@ >"logs/afl_objdump$i.log" 2>&1 &
+    echo "  objdump$i (pid $!) [$flag, FRIDA]"
+    n=$((n+1))
+  done
+else
+  echo "  (FRIDA mode or llvm-objdump unavailable; skipping objdump - build tools/aflplusplus/frida_mode)"
+fi
 echo "launched $n fuzzers"

@@ -108,6 +108,14 @@ run), and the `LD_TRACE_LOADED_OBJECTS=1` / `LD_PRELOAD=` *environment* variable
 target only. IFUNC resolvers still run during relocation — inherent to
 exercising it, and acceptable for fuzzing.
 
+### Binary-only: llvm-objdump
+
+`llvm-objdump` is fuzzed without rebuilding LLVM, using AFL++'s **FRIDA mode**
+(`afl-fuzz -O`) on the installed binary: `llvm-objdump -p @@`. Seeds are valid
+object files (plus a few small malformed ones), kept separate from the loader
+corpus because objdump wants loadable inputs. `run_campaign.sh` adds this job
+when `frida_mode` is built (`setup_fuzz.sh` builds it).
+
 ## Current fixtures
 
 See `src/cases/` for the case list, summaries, and invariant tags.
