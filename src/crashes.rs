@@ -6,7 +6,6 @@
 pub mod glibc;
 pub mod musl;
 pub mod objdump;
-pub mod qemu;
 
 use crate::crash::Crash;
 
@@ -29,9 +28,6 @@ pub const ALL: &[Crash] = &[
     musl::MUSL_DO_RELOCS_345,
     musl::MUSL___DLS3_852,
     musl::MUSL_MEMCPY_66,
-    // qemu-user's own loader (qemu-x86_64), pre-guest
-    qemu::PGB_DYNAMIC_ASSERT,
-    qemu::GLIB_OOM,
     // llvm-objdump (FRIDA-mode binary-only fuzzing)
     objdump::SO_SIGSEGV,
 ];

@@ -227,7 +227,6 @@ fn summary(glibc: usize, musl: usize, results: &Results) -> String {
     let backends: BTreeSet<&str> = results.keys().map(|(b, _)| b.as_str()).collect();
     let unexpected: usize = results.values().filter(|c| is_unexpected(&c.category)).count();
     let by = |t: Target| crashes::ALL.iter().filter(|c| c.target == t).count();
-    let qemu = by(Target::Qemu);
     let objdump = by(Target::LlvmObjdump);
 
     let mut h = String::from("<section class=abstract><h2>Findings</h2>");
@@ -236,9 +235,10 @@ fn summary(glibc: usize, musl: usize, results: &Results) -> String {
          <b>musl</b> dynamic loaders — fuzzed with AFL++ — and through a panel of ELF tools, \
          looking for inputs that <em>crash</em> rather than cleanly accept or reject. \
          Alongside <b>{n_struct}</b> hand-written structural cases, <b>{n_crash}</b> are \
-         crashes reduced to one representative per fault site, each confirmed to reproduce on \
-         the stock binaries: <b>{glibc}</b> glibc, <b>{musl}</b> musl, <b>{qemu}</b> qemu-user \
-         (its own loader), and <b>{objdump}</b> llvm-objdump.</p>"
+         curated crashes, one representative per fault site, each confirmed on the stock \
+         binaries: <b>{glibc}</b> glibc, <b>{musl}</b> musl, and <b>{objdump}</b> llvm-objdump \
+         (binary-only fuzzing). Further crashes — notably in qemu-user's own loader — show up \
+         only in the backend matrix below.</p>"
     ));
     h.push_str(
         "<p>The headline: cheap header validation turns these away — glibc's \
