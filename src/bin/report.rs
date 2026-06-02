@@ -35,8 +35,17 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 // ---- results matrix ------------------------------------------------------
 
-/// (backend, case) -> category, parsed from results/summary.tsv if present.
-type Results = BTreeMap<(String, String), String>;
+/// One backend×case outcome from results/summary.tsv.
+#[derive(Default)]
+struct Cell {
+    category: String,
+    status: String,
+    finding: String,
+}
+
+/// (backend, case) -> outcome, parsed from results/summary.tsv if present.
+/// Columns: backend, case, category, status, json, note, finding.
+type Results = BTreeMap<(String, String), Cell>;
 
 fn read_results(path: &Path) -> Results {
     let mut map = Results::new();
@@ -46,7 +55,15 @@ fn read_results(path: &Path) -> Results {
     for line in text.lines().skip(1) {
         let f: Vec<&str> = line.split('\t').collect();
         if f.len() >= 3 {
-            map.insert((f[0].to_string(), f[1].to_string()), f[2].to_string());
+            let finding = f.get(6).filter(|s| !s.is_empty()).or_else(|| f.get(5));
+            map.insert(
+                (f[0].to_string(), f[1].to_string()),
+                Cell {
+                    category: f[2].to_string(),
+                    status: f.get(3).unwrap_or(&"").to_string(),
+                    finding: finding.unwrap_or(&"").to_string(),
+                },
+            );
         }
     }
     map
@@ -75,12 +92,15 @@ fn crashes_json(root: &Path) -> String {
 fn findings_json(results: &Results) -> String {
     let arr: Vec<_> = results
         .iter()
-        .filter(|(_, cat)| {
-            let c = cat.to_ascii_lowercase();
-            c.contains("crash") || c.contains("timeout") || c.contains("hang") || c.contains("tool-error")
-        })
-        .map(|((backend, case), category)| {
-            serde_json::json!({ "backend": backend, "case": case, "category": category })
+        .filter(|(_, cell)| is_unexpected(&cell.category))
+        .map(|((backend, case), cell)| {
+            serde_json::json!({
+                "backend": backend,
+                "case": case,
+                "category": cell.category,
+                "status": cell.status,
+                "finding": cell.finding,
+            })
         })
         .collect();
     serde_json::to_string_pretty(&arr).unwrap_or_default()
@@ -196,17 +216,13 @@ fn crash_row(root: &Path, c: &Crash) -> String {
 /// outside the curated `crashes::ALL` (e.g. tool crashes, or structural cases
 /// that also crash a loader).
 fn render_findings(results: &Results) -> String {
-    let unexpected = |cat: &str| {
-        let c = cat.to_ascii_lowercase();
-        c.contains("crash") || c.contains("timeout") || c.contains("hang") || c.contains("tool-error")
-    };
-    let mut by_backend: BTreeMap<&str, Vec<(&str, &str)>> = BTreeMap::new();
-    for ((b, case), cat) in results {
-        if unexpected(cat) {
+    let mut by_backend: BTreeMap<&str, Vec<(&str, &Cell)>> = BTreeMap::new();
+    for ((b, case), cell) in results {
+        if is_unexpected(&cell.category) {
             by_backend
                 .entry(b.as_str())
                 .or_default()
-                .push((case.as_str(), cat.as_str()));
+                .push((case.as_str(), cell));
         }
     }
     let mut h = String::from("<h2>Unexpected outcomes</h2>");
@@ -221,13 +237,14 @@ fn render_findings(results: &Results) -> String {
          tool crashes (e.g. <code>llvm-objdump</code>) and qemu-user dying in its own pre-launch \
          loader are surfaced here too. Red = crash.</p>"
     ));
-    h.push_str("<table class=findings><thead><tr><th>backend<th>n<th>cases</tr></thead><tbody>");
+    h.push_str("<table class=findings><thead><tr><th>backend<th>n<th>cases (hover for the finding)</tr></thead><tbody>");
     for (b, cases) in &by_backend {
         let mut cells = String::new();
-        for (case, cat) in cases {
+        for (case, cell) in cases {
             cells.push_str(&format!(
-                "<span class=\"badge {}\">{}</span> ",
-                cat_class(cat),
+                "<span class=\"badge {}\" title=\"{}\">{}</span> ",
+                cat_class(&cell.category),
+                attr(&format!("{} — {}", cell.status, cell.finding)),
                 esc(case)
             ));
         }
@@ -242,10 +259,27 @@ fn render_findings(results: &Results) -> String {
     h
 }
 
+/// True for outcomes that are *not* a clean accept/reject.
+fn is_unexpected(category: &str) -> bool {
+    let c = category.to_ascii_lowercase();
+    c.contains("crash") || c.contains("timeout") || c.contains("hang") || c.contains("tool-error")
+}
+
+/// Escape a string for use inside a double-quoted HTML attribute.
+fn attr(s: &str) -> String {
+    esc(s).replace('"', "&quot;")
+}
+
 fn results_table(results: &Results) -> String {
     let backends: BTreeSet<&str> = results.keys().map(|(b, _)| b.as_str()).collect();
     let cases: BTreeSet<&str> = results.keys().map(|(_, c)| c.as_str()).collect();
-    let mut h = String::from("<div class=scroll><table class=matrix><thead><tr><th>case</th>");
+
+    // Sticky detail panel filled by clicking a cell.
+    let mut h = String::from(
+        "<p class=muted>Hover a cell for the backend's message; click it for the full finding below.</p>\
+         <div id=detail class=detail><span class=muted>Click a cell to see backend · case · status · finding.</span></div>",
+    );
+    h.push_str("<div class=scroll><table class=matrix><thead><tr><th>case</th>");
     for b in &backends {
         h.push_str(&format!("<th>{}</th>", esc(b)));
     }
@@ -253,15 +287,28 @@ fn results_table(results: &Results) -> String {
     for case in &cases {
         h.push_str(&format!("<tr><td class=mono>{}</td>", esc(case)));
         for b in &backends {
-            let cat = results
-                .get(&(b.to_string(), case.to_string()))
-                .map(String::as_str)
-                .unwrap_or("");
-            h.push_str(&format!("<td class=\"cell {}\">{}</td>", cat_class(cat), esc(cat)));
+            match results.get(&(b.to_string(), case.to_string())) {
+                Some(cell) => {
+                    let tip = format!("{} — {}", cell.status, cell.finding);
+                    h.push_str(&format!(
+                        "<td class=\"cell {cls}\" title=\"{tip}\" \
+                         data-b=\"{b}\" data-c=\"{c}\" data-cat=\"{cat}\" data-st=\"{st}\" data-f=\"{f}\">{cat}</td>",
+                        cls = cat_class(&cell.category),
+                        tip = attr(&tip),
+                        b = attr(b),
+                        c = attr(case),
+                        cat = attr(&cell.category),
+                        st = attr(&cell.status),
+                        f = attr(&cell.finding),
+                    ));
+                }
+                None => h.push_str("<td class=cell></td>"),
+            }
         }
         h.push_str("</tr>");
     }
     h.push_str("</tbody></table></div>");
+    h.push_str(MATRIX_JS);
     h
 }
 
@@ -301,6 +348,26 @@ th{background:#fafafa;font-weight:600;font-size:.82rem;text-transform:uppercase;
 .cell{text-align:center;font-size:.78rem}\
 .c-crash{background:#fde2e1;color:#a11;font-weight:600}.c-hang{background:#fff0d6;color:#a60}\
 .c-reject{background:#dcefe0;color:#176}.c-accept{background:#dde7fb;color:#249}.c-other{color:#999}\
+td.cell{cursor:pointer}td.cell.sel{outline:2px solid #36c;outline-offset:-2px}\
+.detail{position:sticky;top:0;z-index:5;background:#fff;border:1px solid #ddd;border-radius:6px;padding:.6rem .8rem;margin:.5rem 0;box-shadow:0 2px 6px rgba(0,0,0,.08)}\
+.detail pre{white-space:pre-wrap;word-break:break-word;margin:.4rem 0 0;font-size:.82rem;color:#333;max-height:240px;overflow:auto}\
 footer{margin:2rem 0 1rem;color:#999;font-size:.85rem}\
 code{background:#eef0f2;padding:.05rem .3rem;border-radius:4px;font-size:.85em}\
 </style>";
+
+/// Click-to-expand for matrix cells: fill #detail with backend·case·status·finding.
+const MATRIX_JS: &str = "<script>\
+(function(){\
+var d=document.getElementById('detail');\
+function e(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}\
+function k(c){c=(c||'').toLowerCase();return c.indexOf('crash')>=0?'c-crash':(c.indexOf('hang')>=0||c.indexOf('timeout')>=0)?'c-hang':(c.indexOf('error')>=0||c.indexOf('reject')>=0)?'c-reject':c.indexOf('accept')>=0?'c-accept':'c-other';}\
+document.querySelectorAll('td.cell[data-b]').forEach(function(td){\
+td.addEventListener('click',function(){\
+var s=td.dataset;\
+d.innerHTML='<b>'+e(s.c)+'</b> &middot; <span class=mono>'+e(s.b)+'</span> &middot; <span class=\"badge '+k(s.cat)+'\">'+e(s.cat)+'</span> <span class=muted>'+e(s.st)+'</span><pre>'+e(s.f||'(no message captured)')+'</pre>';\
+document.querySelectorAll('td.cell.sel').forEach(function(x){x.classList.remove('sel');});\
+td.classList.add('sel');\
+});\
+});\
+})();\
+</script>";

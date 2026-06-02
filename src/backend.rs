@@ -345,9 +345,16 @@ pub(crate) fn default_classification(
                     finding: Some(line),
                 }
             } else {
+                // Surface any message the backend printed before dying (e.g. an
+                // assertion like "pgb_dynamic: Assertion ... failed"); loaders
+                // usually crash silently, leaving just the signal.
                 Classification {
                     category: Category::Crash,
-                    finding: Some("backend crashed".to_string()),
+                    finding: Some(
+                        first_line(stderr_path)
+                            .map(|l| format!("crashed: {l}"))
+                            .unwrap_or_else(|| "backend crashed".to_string()),
+                    ),
                 }
             }
         }
