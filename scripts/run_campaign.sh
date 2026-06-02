@@ -100,4 +100,22 @@ if [ -f "$AFL_PATH/afl-frida-trace.so" ] && [ -n "$OBJDUMP" ] && [ -d "$OBJDUMP_
 else
   echo "  (FRIDA mode or llvm-objdump unavailable; skipping objdump - build tools/aflplusplus/frida_mode)"
 fi
+
+# qemu-user: binary-only (FRIDA) fuzzing of qemu-x86_64. NOTE: qemu executes the
+# guest, so most crashes are guest faults ("uncaught target signal"); the real
+# findings are qemu's own loader crashing pre-guest — triage with that marker.
+QEMU_BIN=${QEMU_BIN:-$(command -v qemu-x86_64 || true)}
+QEMU_FUZZ_JOBS=${QEMU_FUZZ_JOBS:-1}
+QEMU_SEEDS=${QEMU_SEEDS:-$ROOT/fuzz-out/qemu-seeds}
+if [ -f "$AFL_PATH/afl-frida-trace.so" ] && [ -n "$QEMU_BIN" ] && [ -d "$QEMU_SEEDS" ]; then
+  for i in $(seq 1 "$QEMU_FUZZ_JOBS"); do
+    if [ "$i" = 1 ]; then flag="-M qemu"; else flag="-S qemu$i"; fi
+    setsid nohup "$AFL" -O -i "$QEMU_SEEDS" -o "$ROOT/fuzz-out/qemu" $flag -m none -t 2000+ \
+      -- "$QEMU_BIN" @@ >"logs/afl_qemu$i.log" 2>&1 &
+    echo "  qemu$i (pid $!) [$flag, FRIDA]"
+    n=$((n+1))
+  done
+else
+  echo "  (FRIDA mode or qemu-x86_64 unavailable; skipping qemu fuzzing)"
+fi
 echo "launched $n fuzzers"
