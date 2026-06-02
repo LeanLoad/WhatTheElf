@@ -21,9 +21,14 @@ fn main() -> Result<(), Box<dyn Error>> {
     let html = render_html(root, &results);
     fs::write(out.join("index.html"), html)?;
     fs::write(out.join("crashes.json"), crashes_json(root))?;
-
     println!("wrote {}/index.html", out.display());
     println!("wrote {}/crashes.json", out.display());
+
+    // Every unexpected backend×case outcome (crash/hang/error), if check has run.
+    if !results.is_empty() {
+        fs::write(out.join("findings.json"), findings_json(&results))?;
+        println!("wrote {}/findings.json", out.display());
+    }
     Ok(())
 }
 
@@ -61,6 +66,20 @@ fn crashes_json(root: &Path) -> String {
                 "details": c.details,
                 "bytes": fixture_len(root, c.id),
             })
+        })
+        .collect();
+    serde_json::to_string_pretty(&arr).unwrap_or_default()
+}
+
+fn findings_json(results: &Results) -> String {
+    let arr: Vec<_> = results
+        .iter()
+        .filter(|(_, cat)| {
+            let c = cat.to_ascii_lowercase();
+            c.contains("crash") || c.contains("timeout") || c.contains("hang") || c.contains("tool-error")
+        })
+        .map(|((backend, case), category)| {
+            serde_json::json!({ "backend": backend, "case": case, "category": category })
         })
         .collect();
     serde_json::to_string_pretty(&arr).unwrap_or_default()
@@ -109,6 +128,11 @@ fn render_html(root: &Path, results: &Results) -> String {
             h.push_str(&crash_row(root, c));
         }
         h.push_str("</tbody></table>");
+    }
+
+    // Unexpected outcomes across all backends (from the results matrix).
+    if !results.is_empty() {
+        h.push_str(&render_findings(results));
     }
 
     // Backend results matrix (only if check has been run).
@@ -165,6 +189,58 @@ fn crash_row(root: &Path, c: &Crash) -> String {
     )
 }
 
+/// Every backend×case where a backend did something *unexpected* — crashed,
+/// hung, or errored out, as opposed to cleanly accepting or rejecting the input.
+/// This documents the findings the matrix would otherwise bury, including ones
+/// outside the curated `crashes::ALL` (e.g. tool crashes, or structural cases
+/// that also crash a loader).
+fn render_findings(results: &Results) -> String {
+    let unexpected = |cat: &str| {
+        let c = cat.to_ascii_lowercase();
+        c.contains("crash") || c.contains("timeout") || c.contains("hang") || c.contains("tool-error")
+    };
+    let mut by_backend: BTreeMap<&str, Vec<(&str, &str)>> = BTreeMap::new();
+    for ((b, case), cat) in results {
+        if unexpected(cat) {
+            by_backend
+                .entry(b.as_str())
+                .or_default()
+                .push((case.as_str(), cat.as_str()));
+        }
+    }
+    let mut h = String::from("<h2>Unexpected outcomes</h2>");
+    if by_backend.is_empty() {
+        h.push_str("<p class=muted>None — every backend cleanly accepted or rejected each input.</p>");
+        return h;
+    }
+    let total: usize = by_backend.values().map(Vec::len).sum();
+    h.push_str(&format!(
+        "<p class=lede><b>{total}</b> backend×case outcomes where a backend crashed, hung, or \
+         errored (everything else was a clean accept/reject). Loaders faulting are the headline; \
+         tool crashes (e.g. <code>llvm-objdump</code>) and qemu-user dying in its own pre-launch \
+         loader are surfaced here too. Red = crash.</p>"
+    ));
+    h.push_str("<table class=findings><thead><tr><th>backend<th>n<th>cases</tr></thead><tbody>");
+    for (b, cases) in &by_backend {
+        let mut cells = String::new();
+        for (case, cat) in cases {
+            cells.push_str(&format!(
+                "<span class=\"badge {}\">{}</span> ",
+                cat_class(cat),
+                esc(case)
+            ));
+        }
+        h.push_str(&format!(
+            "<tr><td class=mono>{}</td><td class=num>{}</td><td class=findcell>{}</td></tr>",
+            esc(b),
+            cases.len(),
+            cells
+        ));
+    }
+    h.push_str("</tbody></table>");
+    h
+}
+
 fn results_table(results: &Results) -> String {
     let backends: BTreeSet<&str> = results.keys().map(|(b, _)| b.as_str()).collect();
     let cases: BTreeSet<&str> = results.keys().map(|(_, c)| c.as_str()).collect();
@@ -219,6 +295,7 @@ th{background:#fafafa;font-weight:600;font-size:.82rem;text-transform:uppercase;
 .badge{display:inline-block;padding:.05rem .45rem;border-radius:99px;font-size:.78rem;font-weight:600;white-space:nowrap}\
 .sig-segv{background:#fde2e1;color:#a11}.sig-bus{background:#fff0d6;color:#a60}\
 .repro-struct{background:#dcefe0;color:#176}.repro-raw{background:#e6e6ef;color:#449}\
+.findcell{line-height:2.1}.findings .badge{font-family:ui-monospace,monospace}\
 .scroll{overflow-x:auto}.matrix td,.matrix th{white-space:nowrap}\
 .cell{text-align:center;font-size:.78rem}\
 .c-crash{background:#fde2e1;color:#a11;font-weight:600}.c-hang{background:#fff0d6;color:#a60}\
