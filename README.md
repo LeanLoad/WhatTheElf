@@ -151,6 +151,69 @@ Both `cases::ALL` and `crashes::ALL` flow through `gen` → `fixtures/` → `che
 All crash inputs reproduce on the stock system loaders; raw bytes live under
 tracked `crashes/`.
 
+## Prior art / references
+
+The malformed-ELF technique these cases formalize is older than this repo. The
+articles below are the canonical write-ups; each abuses the same loader-vs-tool
+divergence the corpus probes — the kernel `execve` path reads almost nothing,
+while parsers, debuggers, and the dynamic loaders read far more and can be made
+to choke. See the umbrella [`CONFORMANCE.md`](../CONFORMANCE.md) for the
+implementation-by-implementation view of who reads which fields.
+
+- **"Analyzing ELF Binaries with Malformed Headers — Part 1: Emulating Tiny
+  Programs"** — *binaryresearch.github.io*, 2019.
+  <https://binaryresearch.github.io/2019/09/17/Analyzing-ELF-Binaries-with-Malformed-Headers-Part-1-Emulating-Tiny-Programs.html>
+  Only `e_ident` magic, `e_type`, `e_machine`, `e_entry`, `e_phoff`, `e_phnum`
+  must be correct to `execve`; `e_ehsize` and `e_phentsize` are essentially
+  unread on the load path. "Tiny" binaries overlap the program-header table with
+  the ELF header and put the entry point *inside* the header, so a structural
+  parser walks into garbage while the kernel runs the file. The article's method
+  is to emulate (Unicorn) rather than parse.
+  - Covered: [`phdr_overlaps_ehdr`](src/cases/program_headers.rs),
+    [`bad_ehsize_short`](src/cases/headers.rs),
+    [`bad_phentsize_short` / `bad_phentsize_large`](src/cases/headers.rs),
+    [`phnum_zero`](src/cases/program_headers.rs).
+  - Gap → new case **`entry_inside_ehdr`**: a minimal `ET_EXEC` whose `e_entry`
+    and `PT_LOAD` cover the ELF header itself (the canonical tiny-binary shape),
+    tagged `Containment` + `NonOverlap`. Confirms the loaders run it while
+    structural backends disagree.
+
+- **"Screwing with the ELF header for fun and profit"** — *dustri.org*.
+  <https://dustri.org/b/screwing-elf-header-for-fun-and-profit.html>
+  Setting the section-table fields (`e_shoff`, `e_shnum`, `e_shstrndx`) to
+  `0xffff` (or zeroing them) leaves the binary runnable but makes `gdb`
+  ("File truncated"), `objdump`, `ltrace`/`strace`, `elfsh`, and `hte` fail;
+  `radare2` survives. The author stresses it is trivially repaired — friction,
+  not protection.
+  - Covered individually: [`shoff_oob`](src/cases/section_headers.rs),
+    [`shnum_huge_oob`](src/cases/section_headers.rs),
+    [`shstrndx_oob`](src/cases/section_headers.rs),
+    [`shdr_table_truncated`](src/cases/section_headers.rs).
+  - Gap → new case **`shdr_fields_all_ffff`**: the exact POC, setting all three
+    section-table fields to `0xffff` at once (rather than one field per case),
+    tagged `Bounds` + `Consistency`. Verifies the kernel/`ld.so` accept it while
+    the parser/debugger backends crash or bail.
+
+- **"Striking Back at GDB and IDA Debuggers Through Malformed ELF
+  Executables"** — *IOActive* (Alejandro Hernández).
+  <https://www.ioactive.com/striking-back-gdb-and-ida-debuggers-through-malformed-elf-executables/>
+  The kernel trusts program headers; debuggers trust section headers + DWARF.
+  `e_shstrndx > e_shnum` reads past the section table and kills IDA 6.3; a
+  `.debug_line` entry with `dir_index > 0` while `include_dirs` is `NULL`
+  NULL-derefs gdb 7.5.1. The binary executes throughout.
+  - Covered: the `e_shstrndx`-past-table case is
+    [`shstrndx_oob`](src/cases/section_headers.rs).
+  - Gap → new case **`debug_line_bad_dir_index`** (a new `src/cases/debug.rs`
+    module): a `.debug_line` program whose file entry references a
+    nonexistent include-directory index, tagged `Bounds` + `Conjugate`. This is
+    the corpus's first DWARF-level malformation and targets the debugger
+    backends specifically.
+
+The three proposed cases are not yet implemented; they are tracked here so the
+generator stays aligned with the documented techniques. The fuzzers
+(`./fuzz.sh`, FRIDA-mode `llvm-objdump`/`qemu`) cover the same surface
+stochastically; these are the curated, named counterparts.
+
 ## Report
 
 `./report.sh [OUT_DIR]` (default `gh-pages/`, the published-site worktree)
